@@ -1,0 +1,11 @@
+import { execFileSync } from 'node:child_process';
+import { mkdirSync, copyFileSync } from 'node:fs';
+import { dirname, resolve, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
+const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
+const contents = join(root, '.runtime/KiCad Companion.app/Contents');
+mkdirSync(join(contents, 'MacOS'), { recursive: true });
+copyFileSync(join(root, 'native/Info.plist'), join(contents, 'Info.plist'));
+execFileSync('swiftc', [join(root, 'native/Companion.swift'), '-target', `${process.arch === 'arm64' ? 'arm64' : 'x86_64'}-apple-macosx14.0`, '-o', join(contents, 'MacOS/KiCadCompanion'), '-framework', 'Cocoa', '-framework', 'WebKit'], { stdio: 'inherit' });
+execFileSync('codesign', ['--force', '--sign', '-', join(contents, '..')], { stdio: 'inherit' });
+console.log(`Built ${contents}`);

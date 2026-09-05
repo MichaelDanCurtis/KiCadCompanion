@@ -1,0 +1,46 @@
+/* The original theme remains selectable. KiCad chrome uses neutral native tones;
+   PCB colors are independently sourced from the saved KiCad editor theme. */
+.app[data-theme=kicad]{--bg:#242424;--panel:#303030;--raised:#393939;--input:#202020;--line:#484848;--muted:#b0b0b5;--text:#e5e5e8;--accent:#80b8f4;--selected:#304863;--warning:#e5bf80;--danger:#f2ab98;--a2ui-color-on-background:var(--text);background:var(--bg);color:var(--text);color-scheme:dark;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+@media(prefers-color-scheme:light){.app[data-theme=kicad]{--bg:#ececec;--panel:#f5f5f5;--raised:#e3e3e3;--input:#fff;--line:#c3c3c7;--muted:#575960;--text:#25262a;--accent:#185ba4;--selected:#d5e5f5;--warning:#795413;--danger:#9d3523;color-scheme:light}}
+.app[data-theme=kicad] :is(.topbar,.workspace-bar,.tabs,.conversation-title){background:var(--panel)}
+.app[data-theme=kicad] :is(.inspector,.conversation,.visual-card,.findings article,.permissions-panel,.appearance-panel){background:var(--panel);border-color:var(--line)}
+.app[data-theme=kicad] :is(.composer,.filter,.board-top select,.project-select option,.drc-report,.request input,.request select){background:var(--input);border-color:var(--line)}
+.app[data-theme=kicad] :is(.message.user,.suggestions button,.activity-drawer,.message div code,.tabs button span){background:var(--raised);border-color:var(--line)}
+.app[data-theme=kicad] :is(.small-primary,.composer-bottom select,.permissions-toggle[aria-expanded=true],.component-list button.selected,.component-list button:hover){background:var(--selected);border-color:var(--line);color:var(--accent)}
+.app[data-theme=kicad] :is(.message>div,.welcome h1,.findings p,.suggestions button,.component-list button>span:first-child,.pad-list>div>span,.permission-rule strong,.permissions-panel>b,.permission-scope strong){color:var(--text)}
+.app[data-theme=kicad] :is(.eyebrow,.quiet-button,.version,.view-note,.pad-list code,.component-list button>span:nth-child(2),.context-chip>span,.composer-foot,.activity-count,.visual-tag span,footer,.activity-drawer>summary,.permission-rule span,.permissions-panel p,.permission-scope){color:var(--muted)}
+.app[data-theme=kicad] :is(.welcome .eyebrow,.agent-mark,.part-title,.context-chip,.connection.is-live,.component-list button.selected>span){color:var(--accent)}
+.app[data-theme=kicad] :is(.version,.permissions-toggle,.permission-rule,.visual-empty,.permissions-panel .no-permissions){border-color:var(--line)}
+.app[data-theme=kicad] :is(.icon-btn:hover,.small-primary:hover){background:var(--raised);color:var(--text)}
+.app[data-theme=kicad] .brand-mark,.app[data-theme=kicad] .send-button{background:var(--accent);color:var(--input)}
+.app[data-theme=kicad] :is(.live-dot,.connection.is-live i){background:var(--accent);box-shadow:none}
+.app[data-theme=kicad] :is(button,input,select,textarea):focus-visible{outline-color:var(--accent)}
+.app[data-theme=kicad] .request{background:var(--panel);border-color:var(--warning)}
+.app[data-theme=kicad] .request button{background:var(--selected);color:var(--accent)}
+.app[data-theme=kicad] .request .always{background:var(--accent);color:var(--input)}
+.app[data-theme=kicad] :is(.request .decline,.permission-rule button){background:transparent;color:var(--warning);border-color:var(--warning)}
+.app[data-theme=kicad] :is(.severity,.connection){color:var(--warning)}
+.app[data-theme=kicad] :is(.severity.error,.agent-error,.activity-item.error){color:var(--danger)}
+.app[data-theme=kicad] .bar-track{background:var(--raised)}
+.app[data-theme=kicad] .bar-track>div{background:var(--accent)}
+.app[data-theme=kicad] .network rect{fill:var(--selected);stroke:var(--accent)}
+.app[data-theme=kicad] :is(.network text,.line-chart text){fill:var(--text)}
+.app[data-theme=kicad] .network line{stroke:var(--muted)}
+.app[data-theme=kicad] .line-chart line{stroke:var(--line)}
+.app[data-theme=kicad] .line-chart polyline{stroke:var(--accent)}
+.app[data-theme=kicad] .line-chart circle{fill:var(--accent)}
+.appearance-control{position:relative}
+.appearance-toggle{font-size:11px;padding:7px 10px;border:1px solid var(--line);border-radius:5px;color:var(--accent)}
+.appearance-panel{position:absolute;right:0;top:38px;z-index:30;width:285px;padding:18px;background:#172024;border:1px solid var(--line);border-radius:8px;box-shadow:0 12px 36px #0006;font-size:11px}
+.appearance-panel label{display:block;color:var(--accent)}
+.appearance-panel select{display:block;width:100%;margin:9px 0;padding:8px;background:var(--input,#202b2b);border:1px solid var(--line);border-radius:4px}
+.appearance-panel p{line-height:1.6;font-size:10px;color:var(--muted)}
+.appearance-panel>button{color:var(--accent);border:1px solid var(--line);border-radius:4px;padding:6px 12px}
+.board-colors{display:flex;flex-wrap:wrap;align-items:center;gap:6px;padding:13px 24px 14px;font-size:10px;flex-shrink:0}
+.board-colors>span{font-size:8px;letter-spacing:1px;color:var(--muted);margin-right:6px}
+.board-colors button{display:flex;align-items:center;gap:5px;border:1px solid transparent;border-radius:5px;padding:5px 7px;color:var(--muted)}
+.board-colors button[aria-pressed=true]{border-color:var(--accent);color:var(--accent);background:var(--selected,#23322d)}
+.board-colors i{display:block;width:11px;height:11px;border:1px solid #ffffff55;border-radius:50%}
+.board-svg .footprint:hover circle{stroke:var(--accent);stroke-width:.18}
+.canvas{border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+@media(max-width:950px){.board-colors{padding:10px 12px;gap:3px}.board-colors>span{width:100%;margin-bottom:4px}}

@@ -1,0 +1,14 @@
+import { mkdirSync, writeFileSync, chmodSync, existsSync } from 'node:fs';
+import { homedir } from 'node:os';
+import { dirname, resolve, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
+const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
+if (process.platform !== 'darwin') throw new Error('This installer currently targets KiCad 10 on macOS.');
+const destination = join(homedir(), 'Documents/KiCad/10.0/plugins/local_kicad_companion_preview');
+if (existsSync(destination)) throw new Error(`Already installed at ${destination}; refusing to overwrite.`);
+mkdirSync(destination, { recursive:true });
+writeFileSync(join(destination, 'plugin.json'), JSON.stringify({ identifier:'local.kicadcompanion.preview', name:'KiCad Companion', description:'Codex design partner with live board context and A2UI visuals.', runtime:{type:'exec'}, actions:[{identifier:'open-companion',name:'KiCad Companion',description:'Open your Codex design partner',entrypoint:'launch', 'show-button':true,scopes:['pcb']}] },null,2)+'\n');
+const quote = s => "'" + s.replaceAll("'", "'\\''") + "'";
+writeFileSync(join(destination, 'launch'), '#!/bin/sh\nexport PATH='+quote(dirname(process.execPath))+':"$PATH"\nexec '+quote(process.execPath)+' '+quote(join(root,'scripts/launch.mjs'))+'\n');
+chmodSync(join(destination, 'launch'), 0o755);
+console.log(`Installed ${destination}\nRestart the KiCad PCB Editor to discover the Companion action.`);
