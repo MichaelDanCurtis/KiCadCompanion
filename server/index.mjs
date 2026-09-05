@@ -12,6 +12,7 @@ import { visualMessages } from '../shared/visuals.mjs';
 import { ApprovalStore, approvalScope, approvalResponse } from './approvals.mjs';
 import { readKiCadAppearance } from './appearance.mjs';
 import { RenderStore, fingerprint } from './renders.mjs';
+import { studioPrompt, chatPrompt } from './prompts.mjs';
 import { config } from './config.mjs';
 
 const appRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
@@ -254,7 +255,7 @@ async function chat(text, mode = 'agent', imagePath = null, displayText = text) 
       agentLoaded = true;
       state.agent.threadId = threadId;
     }
-    const input = [{ type: 'text', text: `${mode === 'discuss' ? 'DISCUSS ONLY: explain and inspect, do not modify design files. ' : ''}${text}\n\nCompanion context: ${JSON.stringify({ board: state.board, status: state.status, observedAt: state.observedAt, selectedReferences: state.live?.selection || [] })}` }];
+    const input = [{ type: 'text', text: chatPrompt({ text, mode, studio: Boolean(imagePath), context: { board: state.board, status: state.status, observedAt: state.observedAt, selectedReferences: state.live?.selection || [] } }) }];
     if(imagePath)input.push({type:'localImage',path:imagePath});
     upsertMessage(randomBytes(8).toString('hex'), 'user', displayText);
     if (state.agent.busy && turnId) await agent.request('turn/steer', { threadId, expectedTurnId: turnId, input });
@@ -286,7 +287,7 @@ app.post('/api/renders/:id/studio', async(req,res)=>{
   if(job.board!==state.board||job.status!=='completed')throw new Error('Render the selected board first');
   if((await fingerprint(job.board)).sha256!==job.source.sha256)throw new Error('The saved board has changed. Create a fresh actual render first.');
   const style=z.string().trim().max(1200).parse(req.body.style||'Soft studio lighting on a neutral background');
-  const prompt=`Create one AI studio image using the built-in image generation tool, editing the attached actual KiCad render as the reference. Preserve board outline, holes, connector positions, components that are visible, and the ${job.options.color==='kicad'?'original':job.options.color} solder mask. Never add imagined components or connections. This is an illustrative product image, not engineering evidence. Visual direction: ${style}. Model coverage report: ${JSON.stringify(job.models)}. If components have no models, leave them absent; do not invent populated geometry. Use the built-in image generation tool only, not a shell, script, or API-key fallback. Do not edit or save any KiCad file or change component selection. Return the generated image.`;
+  const prompt=studioPrompt({ color: job.options.color, style, models: job.models });
   job.ai={status:'running',startedAt:new Date().toISOString(),prompt,provider:'Codex built-in image generation',sourceRenderId:job.id};
   aiRenderId=job.id;aiImageTask=null;await renders.save(job);
   try {res.json(await chat(prompt,'agent',renders.path(job.id),`Create an AI studio image from the ${job.options.color} ${job.options.camera} render. ${style}`));}

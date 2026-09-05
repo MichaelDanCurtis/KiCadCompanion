@@ -1,0 +1,11 @@
+// Studio restrictions belong to a single request, not the shared conversation.
+export function studioPrompt({ color, style, models }) {
+  return `For this image-generation request only: create one AI studio image using the built-in image generation tool, editing the attached actual KiCad render as the reference. Preserve board outline, holes, connector positions, components that are visible, and the ${color === 'kicad' ? 'original' : color} solder mask. Never add imagined components or connections. This is an illustrative product image, not engineering evidence. Visual direction: ${style}. Model coverage report: ${JSON.stringify(models)}. If components have no models, leave them absent; do not invent populated geometry. Use the built-in image generation tool only, not a shell, script, or API-key fallback. For this request only, do not edit or save any KiCad file or change component selection. Return the generated image. These studio-only restrictions end when this request completes or is cancelled. They do not prohibit later user-authorized design tasks, including assigning component 3D models through Konnect MCP. This does not authorize future edits: explicit user restrictions, normal approvals, and Konnect safety rules still apply.`;
+}
+
+export function chatPrompt({ text, mode, context, studio = false }) {
+  // Also repair the scope of the old template in already-resumed conversations.
+  const scope = studio ? '' : 'Companion workflow scope: any no-edit, no-selection-change, or image-tool-only restrictions automatically added by the companion to a prior AI studio request applied only to that image-generation request. They do not prohibit a separate user-authorized design task, including assigning component 3D models through Konnect MCP. This clarification does not override explicit user restrictions or authorize unrequested edits; normal approvals and Konnect safety rules still apply.\n\n';
+  const discuss = mode === 'discuss' ? 'DISCUSS ONLY: explain and inspect, do not modify design files. ' : '';
+  return `${scope}${discuss}${text}\n\nCompanion context: ${JSON.stringify(context)}`;
+}

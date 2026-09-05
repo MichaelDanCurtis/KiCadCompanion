@@ -7,7 +7,7 @@ Local verification date: 2026-09-05. This distinguishes the extracted package fr
 | Check | Result |
 | --- | --- |
 | Dependency install and lockfile consistency | Passed with Node 22; install scripts disabled during initial extraction |
-| `npm test` | 19 passing tests, including four new configuration/offline-startup checks |
+| `npm test` | 24 passing tests, including four configuration/offline-startup checks and five prompt-scope regressions |
 | `npm run build` | Production React/Vite bundle built |
 | `npm run build:native` | macOS Swift/WebKit wrapper compiled and signed ad hoc |
 | `npm run review:check` | Staged-file scan passed; runtime, images, private paths and obvious credential patterns excluded |
@@ -16,6 +16,8 @@ Local verification date: 2026-09-05. This distinguishes the extracted package fr
 The offline startup test uses temporary empty project/state directories, non-existent Codex/Konnect executables, and an ephemeral port. It verifies that a clean start imports no boards, conversations, approvals or render history, rejects chat without a board, and enforces Origin/internal-token/project checks.
 
 Configuration tests check narrow default discovery, explicit workspace and executable overrides, versioned KiCad config paths, port validation, and rejection of a board directory outside the selected workspace. Existing tests cover approval scope/persistence, protocol error propagation, A2UI schema processing, colors/contours, render provenance, invalid input and source changes.
+
+Prompt-scope tests cover request-local studio restrictions, clarification of legacy studio wording on later chat turns, preservation of explicit user restrictions and discussion mode, render-fidelity constraints, and server integration. These are prompt-contract tests, not a new live model or image-generation run.
 
 ## Prior prototype evidence — not repeated against this extraction
 
