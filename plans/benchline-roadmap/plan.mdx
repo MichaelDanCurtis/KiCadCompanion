@@ -1,0 +1,104 @@
+---
+title: "Benchline — roadmap and executable goals"
+brief: "Fourteen bounded goals, seventy acceptance criteria, and explicit software, hardware, and release gates."
+version: 2
+source: "agent-native-plan"
+---
+
+## Outcome and review scope
+
+Benchline coordinates a product from source-backed module research through electronics, firmware, editable mechanical CAD, application software, and verified assembly. The top canvas shows how an ESP32 accessory project could appear in the current companion shell and the proposed Benchline workspace. Both are static fixture illustrations.
+
+This is a local, repository-owned proposal. No implementation goal is active. Start with BL-01 after reviewing its contract. The source repository is presently named KiCadCompanion; runtime branding and migration are work, not implied by the new product name.
+
+<Callout id="authority" tone="decision">
+
+The per-goal files in docs/benchline/goals/ are the execution contracts. docs/benchline/GOALS.md supplies shared constraints. status.json is a proposed roadmap ledger, not a scheduler and not the host's active Goal state. Editing the visual overview alone never changes a goal's acceptance criteria.
+
+</Callout>
+
+## Baseline and reuse
+
+The independently extracted checkout is based on commit 606ee2d. Its existing verification report records 24 tests; a fresh run is required when executing a goal. Preserve the live board context, selection, A2UI visuals, actual/illustrative render distinction, and exact permission scopes.
+
+Existing anchors: server/config.mjs configuration(); scripts/launch.mjs ready(); server/codex.mjs CodexAgent; server/konnect.mjs Konnect.call()/unpack(); server/approvals.mjs ApprovalStore; server/renders.mjs RenderStore/fingerprint(); src/main.jsx workbench/inspector/conversation.
+
+The current session record is not a task journal. Pending approval/recovery state and shutdown flushing need implementation. Discuss-only is prompt-level today; BL-04 must prove enforcement before the product advertises it.
+
+## Dependency map
+
+<Diagram id="goal-map" html={"<div class=\"diagram-panel\" style=\"display:grid;gap:14px\">\n<div class=\"diagram-card\"><strong>Foundation</strong><p>BL-01 standalone → BL-02 provenance + BL-03 project model → BL-04 action boundary</p></div>\n<div style=\"display:grid;grid-template-columns:1fr 1fr;gap:14px\"><div class=\"diagram-card\"><strong>Human workspace</strong><p>BL-05 layout, selection, detachment</p><small>depends on BL-03 and BL-04</small></div><div class=\"diagram-card\"><strong>Execution core</strong><p>BL-06 durable tasks and evidence</p><small>depends on BL-03 and BL-04</small></div></div>\n<div class=\"diagram-card\"><strong>BL-07 reviewed module and BOM</strong><p>Evidence and exact revision unlock the specialist work.</p></div>\n<div style=\"display:grid;grid-template-columns:1fr 1fr;gap:14px\"><div class=\"diagram-card\"><strong>Electrical → mechanical</strong><p>BL-08 KiCad → BL-10 FreeCAD</p><small>Model preservation and real geometry</small></div><div class=\"diagram-card\"><strong>Firmware → application</strong><p>BL-09 firmware → BL-11 frontend</p><small>Shared protocol and simulator</small></div></div>\n<div class=\"diagram-card\"><strong>Integration and release gates</strong><p>BL-12 software proof → BL-13 physical proof → BL-14 private candidate</p><small>No automatic publication or successor-goal activation</small></div></div>"} caption="Grouped work streams; exact prerequisite edges are in docs/benchline/status.json." />
+
+## Goal contracts
+
+| Goal | Outcome | Prerequisites |
+| --- | --- | --- |
+| BL-01 | Establish the standalone Benchline foundation | None |
+| BL-02 | Inventory licenses and commercial dependencies | BL-01 |
+| BL-03 | Create the versioned product-project model | BL-01 |
+| BL-04 | Enforce tool capabilities and approval boundaries | BL-02, BL-03 |
+| BL-05 | Build the adaptable Benchline workspace | BL-03, BL-04 |
+| BL-06 | Implement durable plan execution and evidence | BL-03, BL-04 |
+| BL-07 | Build reviewed module packages and BOM research | BL-02, BL-03, BL-04 |
+| BL-08 | Prove safe electronics authoring and model assignment | BL-04, BL-06, BL-07 |
+| BL-09 | Generate and verify firmware offline | BL-04, BL-06, BL-07 |
+| BL-10 | Create editable FreeCAD enclosures with revision checks | BL-04, BL-06, BL-07, BL-08 |
+| BL-11 | Connect an application frontend to a device simulator | BL-04, BL-06, BL-09 |
+| BL-12 | Verify the cross-discipline software workflow | BL-05, BL-06, BL-08, BL-09, BL-10, BL-11 |
+| BL-13 | Complete human-assisted physical acceptance | BL-12 |
+| BL-14 | Prepare a distributable private preview candidate | BL-02, BL-12, BL-13 |
+
+Every goal contains scope, reuse points, deliverables, five stable acceptance IDs, verification, blockers, non-goals, and a copyable activation prompt. Work in one goal-sized contract at a time; independent goals may be developed separately only with explicit coordination.
+
+BL-11 is an optional product branch only if the owner approves a no-frontend pilot and a corresponding BL-12 scope amendment. It cannot simply be marked verified when no app was tested.
+
+## Architecture decisions
+
+Keep native engineering files authoritative. A versioned portable project manifest links stable IDs, requirements, relative locators, revisions, and dependency edges. User-specific mutable state stays outside portable project source.
+
+Use local SQLite for durable tasks/attempts/evidence, with migrations and recovery. Audit the selected binding. Keep live document revision/dirty state separate from saved-file hashes. A changed input invalidates affected evidence but preserves prior history.
+
+All Benchline-initiated actions pass through an execution boundary. Current capabilities, document identity, revision, exact arguments and approval are checked at dispatch. Allow once, Decline, and inspectable/revocable scoped Always allow are required: matching actions avoid repeat prompts but still pass fresh checks. Unknown outcomes are reconciled before retry; one native document has one writer.
+
+Keep Codex behind a provider adapter and specialist tools behind capability adapters. FreeCAD is the first mechanical backend. Prefer permissive dependencies and retain owner review for copyleft, assets, provider terms and distribution.
+
+### Planned module boundaries
+
+<AnnotatedCode id="module-map" filename="Planned module map — not implemented APIs" language="text" code={"shared/project.mjs       Portable manifest and revision schemas\nserver/projects.mjs      Identity, locators and impact queries\nserver/actions.mjs       Authorization, revisions and dispatch\nserver/adapters/          Specialist capability contracts\nserver/workflows.mjs     Durable attempts, recovery and evidence\nsrc/main.jsx             Incrementally extract workspace panes"} annotations={[
+{lines:"1-2",label:"BL-03",note:"Reuse existing configuration and fingerprinting; stable identities survive project relocation."},
+{lines:"3-4",label:"BL-04",note:"Reuse exact approval scopes and Konnect error propagation; add enforcement and adapter conformance tests."},
+{lines:"5",label:"BL-06",note:"Replace session-only completion assumptions with durable transactional records."},
+{lines:"6",label:"BL-05",note:"Retain current workbench/agent interaction; avoid an unrelated UI framework rewrite."}
+]} />
+
+## Verification gates
+
+<Checklist id="milestone-gates" items={[
+{id:"gate-foundation",label:"Independent startup and project isolation",note:"BL-01; migration dry run, native/tool identity and rollback."},
+{id:"gate-controls",label:"Negative-tested action boundary and restart recovery",note:"BL-04/06; stale proposals, denial, replay, unknown outcomes and manual edits."},
+{id:"gate-native",label:"Native tool and software integration",note:"BL-12; actual KiCad/FreeCAD, firmware build, browser/simulator, matching revisions."},
+{id:"gate-physical",label:"Observed physical prototype acceptance",note:"BL-13; explicit operator, unit, procedure, measurements and fit evidence."},
+{id:"gate-release",label:"Private package and owner review",note:"BL-14; installation, rollback, dependency/asset rights, privacy, support claims."}
+]} />
+
+A successful generated file is not a successful build; a build is not measured hardware behavior. A render is not a collision/fit test. All evidence must be linked to the relevant revisions. No goal may lower its thresholds, skip a required live test, or substitute a blocker report for required implementation.
+
+The first implementation scope is launch/config/native/plugin identity and migration tests under BL-01. It does not include board editing, FreeCAD, publication or cutover without explicit approval.
+
+## Start BL-01
+
+<Code id="first-goal" language="text" caption="Paste into Codex from the standalone source checkout after reviewing the contract." code={"/goal Complete BL-01: Run and verify Benchline from its independent checkout with explicit customer-project selection and a reversible migration path from the companion prototype. Read docs/benchline/GOALS.md and docs/benchline/goals/BL-01.md first, verify its prerequisites and current checkout, and work only within that goal's scope. Satisfy every acceptance criterion with current evidence in docs/benchline/evidence/BL-01.md while preserving the shared safety and licensing constraints. Do not weaken criteria, activate another goal, publish, or perform unapproved external/hardware actions. If required input or authority is missing, report the exact blocker and the smallest action needed; do not mark an implementation goal complete merely because a blocker report exists."} />
+
+Use one goal per task. The user controls /goal pause, /goal resume and budgets. No token allowance or ongoing automation is inferred. Official guidance: https://developers.openai.com/cookbook/examples/codex/using_goals_in_codex
+
+## Boundaries and deferred work
+
+No private customer artifacts, inherited approvals or account data are copied into Benchline. All KiCad source mutation stays on validated Konnect tools. For missing capabilities, extend and test a narrow operation under approved scope rather than bypass safeguards.
+
+Do not publish, accept a CLA/license, purchase, flash, energize, print, deploy or perform irreversible provisioning without the required specific owner authority. Plan completion is not product release or legal clearance.
+
+Universal routing, RF/high-speed/mains work, certification, cloud tenancy, a marketplace, broad vendor scraping, additional CAD engines and production deployment are deferred to separate future contracts.
+
+## Open Questions
+
+<QuestionForm id="owner-decisions" questions={[{"id":"pilot","title":"Which exact module and accessory should be the first pilot?","subtitle":"Needed before BL-07. Recommended: a small low-voltage ESP32 accessory with documented module revision, carrier, enclosure and local status/configuration frontend.","mode":"freeform","placeholder":"Manufacturer, exact module/revision, intended functions, size and power constraints."},{"id":"cutover","title":"When should the old companion runtime be switched over?","subtitle":"BL-01 can establish an independent preview without interrupting the existing app.","mode":"single","options":[{"id":"staged","label":"Verify a separate preview first","detail":"Inspect migration and rollback before explicitly approving runtime cutover.","recommended":true},{"id":"later","label":"Leave the current runtime until the core is ready","detail":"Use the standalone build only for reference-project development."}]},{"id":"distribution","title":"What distribution target should guide BL-14?","subtitle":"No own-product license, publication or contract is selected by this answer.","mode":"single","options":[{"id":"private","label":"Private macOS preview","detail":"Keep commercial options open; test one supported environment first.","recommended":true},{"id":"broader","label":"Broader cross-platform preview","detail":"Requires new platform-specific goals and test environments before release."}]}]} submitLabel="Record review decisions" />

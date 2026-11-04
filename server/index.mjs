@@ -14,10 +14,30 @@ import { readKiCadAppearance } from './appearance.mjs';
 import { RenderStore, fingerprint } from './renders.mjs';
 import { studioPrompt, chatPrompt } from './prompts.mjs';
 import { config } from './config.mjs';
+import { claimState } from './instance.mjs';
+import { ProductBriefStore, productBriefRoutes } from './product-briefs.mjs';
+import {ProjectStore,projectRoutes} from './projects.mjs';
+import {ArtifactEditors,artifactEditorRoutes} from './artifact-editors.mjs';
+import {createEditorObservation} from './editor-observation.mjs';
+import {ActionGate} from './actions.mjs';
+import {actionRoutes,projectTargetResolver} from './action-routes.mjs';
+import {KonnectAdapter} from './adapters/konnect.mjs';
+import {createKonnectModelRegistration} from './adapters/konnect-model-registration.mjs';
+import {providerBoundary,requireProviderMode} from './provider-boundary.mjs';
+import {ProviderAccount} from './provider-account.mjs';
+import {providerAccountRoutes} from './provider-account-routes.mjs';
+import {ProductProviderController, productProviderRoutes} from './provider-controller.mjs';
+import {ModulePackageStore,modulePackageRoutes} from './module-packages.mjs';
+import {createDigiKeyReader} from './distributor-digikey.mjs';
+import {createModuleSourceReader} from './module-sources.mjs';
+import {createProjectWorkflows,workflowRoutes} from './workflow-projects.mjs';
+import {WorkspaceViews, workspaceViewRoutes, workspaceMutationGuard} from './workspace-views.mjs';
+import {createProviderRuntime} from './provider-runtime.mjs';
+import {createShutdown, closeHttpServer} from './shutdown.mjs';
 
 const appRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const {workspace, runtime} = config;
-await mkdir(runtime, { recursive: true });
+const identity = await claimState(config, appRoot);
 const port = config.port;
 const url = `http://127.0.0.1:${port}`;
 const token = randomBytes(32).toString('hex');
@@ -30,9 +50,46 @@ app.use((req, res, next) => {
   res.setHeader('Referrer-Policy', 'no-referrer');
   next();
 });
+// Module imports need room for a bounded 512 KiB file plus its request envelope.
+app.use('/api/module-library',express.json({ limit: '1mb' }));
 app.use(express.json({ limit: '256kb' }));
+app.use(workspaceMutationGuard({views:()=>workspaceViews,gate:()=>actionGate,provider:()=>productProvider}));
+const providerAccount = new ProviderAccount({binary: config.codex, root: join(config.stateRoot, 'providers', 'codex-account')});
+providerAccountRoutes(app, providerAccount);
+const productBriefs=new ProductBriefStore(join(runtime,'product-briefs.json'));
+await productBriefs.init();
+productBriefRoutes(app,productBriefs);
+let editorObservationConfiguration;
+if(config.editorObservation){try{editorObservationConfiguration=JSON.parse(await readFile(config.editorObservation,'utf8'));}catch{}}
+const editorObservation=createEditorObservation(editorObservationConfiguration);
+const productProjects=new ProjectStore({storageRoot:join(runtime,'product-models'),managedRoot:join(runtime,'product-workspaces'),liveProvider:editorObservation.observe});
+await productProjects.init();
+let moduleSourceConfiguration;
+if(config.moduleSources){try{moduleSourceConfiguration=JSON.parse(await readFile(config.moduleSources,'utf8'));}catch{}}
+let digiKeyConfiguration;
+if(config.digiKey){try{digiKeyConfiguration=JSON.parse(await readFile(config.digiKey,'utf8'));}catch{}}
+const modulePackages=new ModulePackageStore({path:join(runtime,'module-packages.json'),projects:productProjects,sourceReader:createModuleSourceReader(moduleSourceConfiguration),
+  distributor:createDigiKeyReader(digiKeyConfiguration,{prohibitedRoots:[process.cwd(),config.workspace,config.stateRoot]})});
+await modulePackages.init();
+const workflows=createProjectWorkflows({path:join(runtime,'workflows.sqlite'),projects:productProjects});
+const workspaceViews=new WorkspaceViews({projects:productProjects,quiesce:async projectId=>{
+  if(productProvider.status().scope?.projectId===projectId) await productProvider.close();
+  await Promise.allSettled([...workflows.pending]);
+  await modulePackages.pending;
+  await artifactEditors.pending;
+  // Admission is already closed by WorkspaceViews.release. Drain admitted work
+  // before another controller can exist. AllSettled prevents early rejection.
+  const settled=await Promise.allSettled([actionGate.pending,productProjects.pending]);
+  if(settled.some(r=>r.status==='rejected') || actionGate.broken) throw Error('Workspace persistence did not settle');
+}});
+workspaceViewRoutes(app,workspaceViews);
+const artifactEditors=new ArtifactEditors({projects:productProjects,authorize:(projectId,token)=>workspaceViews.authorize(projectId,token),editor:config.pcbEditor});
+artifactEditorRoutes(app,artifactEditors);
+workflowRoutes(app,{...workflows,views:workspaceViews});
+modulePackageRoutes(app,{store:modulePackages,views:workspaceViews});
+projectRoutes(app,productProjects,productBriefs);
 const peers = new Set();
-const state = { instanceRoot:appRoot, workspace, board: null, projects: [], status: 'connecting', observedAt: null, error: null,
+const state = { ...identity, board: null, projects: [], status: 'connecting', observedAt: null, error: null,
   live: null, agent: { connected: false, busy: false }, activity: [], messages: [], surfaces: {}, requests: [], permissions: [], drc: null };
 const approvals = new ApprovalStore(join(runtime, 'permissions.json'));
 const activeItems = new Map();
@@ -44,6 +101,31 @@ await renders.init();
 let aiRenderId=null, aiImageTask=null, studioStarting=false;
 function publishPermissions() { state.permissions = approvals.list(state.board); publish('permissions', state.permissions); }
 let konnect, agent, connecting, refreshing, startingTurn = false, threadId, turnId, boardHash, agentLoaded = false;
+let actionKonnect,actionConnecting;
+const actionAdapters=new Map([['konnect',new KonnectAdapter({expectedIpcAddress:config.actionIpcAddress,connection:async()=>{
+  if(actionKonnect)return actionKonnect;
+  if(!actionConnecting)actionConnecting=(async()=>{const candidate=new Konnect({configPath:config.actionKonnectConfig});try{await candidate.connect();actionKonnect=candidate;return candidate;}catch(e){await candidate.close();throw e;}})().finally(()=>{actionConnecting=null;});
+  return actionConnecting;
+}})]]);
+// No binding is inferred from the open board or customer project. Missing or
+// changed host qualification advertises this operation as unsupported.
+let nativeModelConfiguration;
+if(config.nativeModelRegistration){
+  try{nativeModelConfiguration=JSON.parse(await readFile(config.nativeModelRegistration,'utf8'));}catch{}
+}
+const nativeModels=await createKonnectModelRegistration(nativeModelConfiguration);
+actionAdapters.set('native-models',nativeModels.adapter);
+const actionGate=new ActionGate({path:join(runtime,'actions.json'),resolveTarget:projectTargetResolver(productProjects),adapters:actionAdapters});
+await actionGate.init();
+actionRoutes(app,actionGate,actionAdapters);
+// Product-only opt-in. The legacy launcher retains its independent refusal.
+// Capability qualification reads pins only; a profile/model session starts only
+// after the user selects a product/document and explicitly connects.
+const productRuntime = await createProviderRuntime({enabled:config.providerRuntime==='local-dispatch-v1',
+  binary:config.codex,root:join(config.stateRoot,'providers','codex-account'),model:config.providerModel});
+const productProvider = new ProductProviderController({gate: actionGate,...productRuntime});
+productProviderRoutes(app, productProvider);
+state.providerBoundary=providerBoundary;
 let persistence = Promise.resolve(), persistTimer;
 const sessionPath = join(runtime, 'session.json');
 function persist() {
@@ -85,8 +167,9 @@ async function findBoards(directory) {
   }
   return found;
 }
-state.projects = await findBoards(config.boardsDir);
-state.board = state.projects[0]?.path || null;
+state.projects = config.projectSelected ? await findBoards(config.boardsDir) : [];
+// The user selects a board, even if discovery finds exactly one. A saved
+// selection is restored only from this project's isolated Benchline state.
 try {
   const saved = JSON.parse(await readFile(sessionPath, 'utf8'));
   if (state.projects.some(p => p.path === saved.board)) {
@@ -118,7 +201,7 @@ async function refresh() {
   if (refreshing) return refreshing;
   refreshing = (async () => {
     try {
-      if (!state.board) throw new Error('No board selected. Set COMPANION_WORKSPACE to your project folder, then restart.');
+      if (!state.board) throw new Error('Choose a board. To configure a project, set BENCHLINE_WORKSPACE and restart Benchline.');
       const live = await observer({ board: state.board });
       const nextHash = createHash('sha256').update(JSON.stringify({ components: live.components.map(({selected, ...c}) => c), tracks: live.tracks, shapes: live.shapes })).digest('hex');
       if (boardHash && boardHash !== nextHash) activity('Board changed in KiCad', 'completed', 'Live component and routing context refreshed.');
@@ -201,6 +284,8 @@ function handleAgentEvent({ method, params: p = {} }) {
   publish('agent', state.agent);
 }
 async function connectAgent() {
+  if (!config.projectSelected || !state.board) throw new Error('Select a project and board before connecting the agent');
+  requireProviderMode('agent');
   if (state.agent.connected) return;
   if (connecting) return connecting;
   connecting = (async () => {
@@ -237,6 +322,7 @@ async function connectAgent() {
 }
 async function chat(text, mode = 'agent', imagePath = null, displayText = text) {
   if(!state.board)throw new Error('Choose a workspace containing a PCB before starting the agent');
+  requireProviderMode(mode);
   if (startingTurn) throw new Error('A turn is starting; please wait');
   startingTurn = true;
   try {
@@ -401,8 +487,8 @@ if (process.argv.includes('--dev')) {
   app.use(express.static(join(appRoot, 'dist')));
   app.get('/{*path}', (req, res) => res.sendFile(join(appRoot, 'dist/index.html')));
 }
-app.use((error, req, res, next) => { if (!res.headersSent) res.set('Cache-Control','no-store').status(400).json({ error: error.message }); });
-const server = app.listen(port, '127.0.0.1', () => console.log(`KiCad Companion: ${url}`));
+app.use((error, req, res, next) => { if (!res.headersSent) res.set('Cache-Control','no-store').status(error.status||400).json({ error: error.message }); });
+const server = app.listen(port, '127.0.0.1', () => console.log(`Benchline: ${url}`));
 server.on('error', e => { console.error(e.message); process.exit(1); });
 const interval = setInterval(()=>{if(state.board&&config.autoConnect)refresh()}, 2500);
 if(config.autoConnect)await refresh();
@@ -412,5 +498,21 @@ try { konnect = new Konnect(); await konnect.connect(); activity('Konnect MCP re
 catch (e) { activity('Konnect observer failed', 'error', e.message); }
 connectAgent().catch(e => { state.agent.error = e.message; publish('agent', state.agent); });
 }
-async function stop() { clearInterval(interval); renders.close(); agent?.close(); await konnect?.close(); server.close(); process.exit(0); }
+const stop = createShutdown({steps: [
+  {name: 'HTTP server', close: () => {clearInterval(interval); return closeHttpServer(server);}},
+  {name: 'module library storage', close: () => modulePackages.pending},
+  {name: 'artifact editor opening', close: () => artifactEditors.pending},
+  {name: 'editor observations', close: () => editorObservation.close()},
+  {name: 'workflow storage', close: () => workflows.store.close()},
+  {name: 'renders', close: () => renders.close()},
+  {name: 'legacy agent', close: () => agent?.close()},
+  {name: 'product provider', close: () => productProvider.close()},
+  {name: 'account provider', close: () => providerAccount.disconnect()},
+  {name: 'native model registration', close: () => nativeModels.close()},
+  {name: 'Konnect observer', close: () => konnect?.close()},
+  {name: 'Konnect actions', close: async () => {await actionConnecting?.catch(() => {}); await actionKonnect?.close();}},
+], finish: result => {
+  if (!result.ok) console.error(`Benchline shutdown cleanup failed: ${result.failures.map(item => item.name).join(', ')}. Inspect recovery before restarting.`);
+  process.exit(result.ok ? 0 : 1);
+}});
 process.on('SIGINT', stop); process.on('SIGTERM', stop);

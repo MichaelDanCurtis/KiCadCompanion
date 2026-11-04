@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "status": "awaiting-owner",
+  "target": {"vendor": "Espressif Systems", "model": "ESP32-S3-EYE", "hardwareRevision": "v2.2"},
+  "unit": null,
+  "software": null,
+  "authorization": null,
+  "power": null,
+  "equipment": null,
+  "operator": null,
+  "measurements": null,
+  "fit": null,
+  "failures": null,
+  "simulatedValuesPresent": true,
+  "blockers": [
+    "exact unit identity is not supplied",
+    "flash and power actions are not approved",
+    "equipment/operator/measurements are absent",
+    "printed enclosure and assembly fit are not observed"
+  ]
+}

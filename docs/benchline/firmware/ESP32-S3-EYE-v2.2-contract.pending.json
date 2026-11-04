@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 1,
+  "status": "awaiting-owner",
+  "target": {
+    "vendor": "Espressif Systems",
+    "model": "ESP32-S3-EYE",
+    "hardwareRevision": "v2.2"
+  },
+  "bsp": {
+    "version": "6.0.0",
+    "commit": "b1bc71e7980663110055fbeba7eab59d5e689c2b",
+    "idfRequirement": ">=5.4",
+    "exactSdkVersion": null,
+    "toolchain": null,
+    "sdkPolicy": "support-compatible-esp-idf-releases",
+    "policyNote": "Owner decision: no single ESP-IDF release is a product requirement; record the concrete release/toolchain used for each reproducible pilot build."
+  },
+  "requirements": {
+    "interfaces": null,
+    "commands": null,
+    "safeStartup": null,
+    "timeoutsAndErrors": null,
+    "approvedBy": null
+  },
+  "electrical": {
+    "reservedPins": null,
+    "powerLimits": null,
+    "completePinInventory": false,
+    "sourceRevisionConflicts": [
+      "ESP32-S3-EYE sub-board filename V1.1 vs title-block Rev 1.0"
+    ]
+  },
+  "readiness": {
+    "build": false,
+    "flash": false,
+    "hardwareTest": false,
+    "blockers": [
+      "a reproducible pilot build still needs a concrete ESP-IDF/toolchain manifest for the chosen compatible release",
+      "firmware behavior requirements are undefined",
+      "board electrical limits and complete reserved-pin contract are unresolved"
+    ]
+  }
+}

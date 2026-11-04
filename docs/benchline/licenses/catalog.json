@@ -1,0 +1,440 @@
+{
+  "schemaVersion": 1,
+  "auditedAt": "2026-09-05",
+  "legalClearance": false,
+  "scope": "Current standalone source and installed npm closure; external tools are version observations, not bundled-runtime audits. No customer design data is included.",
+  "gates": [
+    {
+      "id": "G-OWNER",
+      "owner": "Product owner + counsel",
+      "decision": "Choose Benchline source license and clear extracted/authored source ownership, name and trademarks.",
+      "status": "open",
+      "blocks": "external distribution or hosted offering in the affected scope"
+    },
+    {
+      "id": "G-NPM",
+      "owner": "Release engineer + counsel",
+      "decision": "Review embedded code and final distributed notices, resolve DOMPurify license election and argparse historical terms.",
+      "status": "open",
+      "blocks": "external distribution or hosted offering in the affected scope"
+    },
+    {
+      "id": "G-TARGET",
+      "owner": "Release engineer",
+      "decision": "Rebuild per target and inventory missing optional/native binaries, their embedded libraries and notices.",
+      "status": "open",
+      "blocks": "external distribution or hosted offering in the affected scope"
+    },
+    {
+      "id": "G-KONNECT",
+      "owner": "Product owner + counsel",
+      "decision": "Confirm external-MCP distribution boundary versus Konnect bundling/forking; review contradictory upstream wording and contributor terms.",
+      "status": "open",
+      "blocks": "external distribution or hosted offering in the affected scope"
+    },
+    {
+      "id": "G-KICAD",
+      "owner": "CAD integration owner + counsel",
+      "decision": "Review exact KiCad executable/SWIG linkage, binary dependencies and any patches before distributing or embedding.",
+      "status": "open",
+      "blocks": "external distribution or hosted offering in the affected scope"
+    },
+    {
+      "id": "G-FREECAD",
+      "owner": "Mechanical integration owner + counsel",
+      "decision": "Select exact FreeCAD build and review LGPL terms plus Qt/OpenCASCADE/add-ons before integration or bundling.",
+      "status": "open",
+      "blocks": "external distribution or hosted offering in the affected scope"
+    },
+    {
+      "id": "G-PYTHON",
+      "owner": "Runtime engineer",
+      "decision": "Lock Python wheels per target and inspect native contents before bundling; observed metadata is not a redistributable runtime audit.",
+      "status": "open",
+      "blocks": "external distribution or hosted offering in the affected scope"
+    },
+    {
+      "id": "G-PROVIDER",
+      "owner": "Product owner + counsel",
+      "decision": "Confirm account-specific provider terms, embedding/distribution, cloud transfers and credential ownership. Source-code licenses do not grant service access.",
+      "status": "open",
+      "blocks": "external distribution or hosted offering in the affected scope"
+    },
+    {
+      "id": "G-FONTS",
+      "owner": "Design + release engineer",
+      "decision": "Choose removal or pinned self-hosted fonts; retain OFL, verify font binary versions and privacy behavior.",
+      "status": "open",
+      "blocks": "external distribution or hosted offering in the affected scope"
+    },
+    {
+      "id": "G-ASSETS",
+      "owner": "Content/library owner",
+      "decision": "Approve each datasheet, footprint, CAD model, image and template revision for the intended reuse/redistribution; customer files are excluded.",
+      "status": "open",
+      "blocks": "external distribution or hosted offering in the affected scope"
+    },
+    {
+      "id": "G-FIRMWARE",
+      "owner": "Firmware lead + counsel",
+      "decision": "Choose SDK version/target; inventory each component, toolchain and vendor binary before shipping firmware.",
+      "status": "open",
+      "blocks": "external distribution or hosted offering in the affected scope"
+    },
+    {
+      "id": "G-NATIVE",
+      "owner": "Release engineer + counsel",
+      "decision": "Review compiler/runtime redistribution and Apple platform/signing terms for the exact packaged app.",
+      "status": "open",
+      "blocks": "external distribution or hosted offering in the affected scope"
+    }
+  ],
+  "integrations": [
+    {
+      "id": "konnect",
+      "version": "0.11.0",
+      "source": "https://github.com/mixelpixx/Konnect/tree/v0.11.0",
+      "declaredLicense": "AGPL-3.0; separately offered commercial terms",
+      "mode": "external executable via MCP; not bundled",
+      "obligations": "Keep Konnect code separate. Exact source/offering and contributor obligations depend on distribution model; no commercial contract or CLA accepted.",
+      "gate": "G-KONNECT",
+      "checkedAt": "2026-09-05",
+      "review": "inventory only; unresolved decisions remain gated"
+    },
+    {
+      "id": "kicad",
+      "version": "10.0.6 (observed CLI)",
+      "source": "https://www.kicad.org/about/licenses/",
+      "declaredLicense": "GPL-3.0-or-later majority; mixed third-party licenses",
+      "mode": "external GUI/CLI; not bundled",
+      "obligations": "Review full build and modifications if redistributed; output rights and library asset terms are separate.",
+      "gate": "G-KICAD",
+      "checkedAt": "2026-09-05",
+      "review": "inventory only; unresolved decisions remain gated"
+    },
+    {
+      "id": "pcbnew",
+      "version": "KiCad 10.0.6; bundled Python 3.9.13",
+      "source": "https://www.kicad.org/about/licenses/",
+      "declaredLicense": "KiCad GPL terms; binding/runtime components need exact audit",
+      "mode": "external KiCad Python process imported by model-audit.py",
+      "obligations": "Do not assume process isolation or imports resolve derivative/linkage questions; retire or review this legacy helper before distribution.",
+      "gate": "G-KICAD",
+      "checkedAt": "2026-09-05",
+      "review": "inventory only; unresolved decisions remain gated"
+    },
+    {
+      "id": "freecad",
+      "version": "UNSELECTED; reference source tag 1.0.2 only",
+      "source": "https://github.com/FreeCAD/FreeCAD/blob/1.0.2/LICENSE",
+      "declaredLicense": "LGPL-2.0 license text; reviewed core header permits later versions. Per-file and dependency terms still need review",
+      "mode": "proposed external native application; not implemented or bundled",
+      "obligations": "Pin supported release/build; audit Qt, OpenCASCADE, Python and add-ons. A bridge does not relabel FreeCAD as MIT.",
+      "gate": "G-FREECAD",
+      "checkedAt": "2026-09-05",
+      "review": "inventory only; unresolved decisions remain gated"
+    },
+    {
+      "id": "esp-idf",
+      "version": "UNSELECTED; reference source tag v5.5.1 only",
+      "source": "https://github.com/espressif/esp-idf/blob/v5.5.1/LICENSE",
+      "declaredLicense": "Apache-2.0 main license; other components have their own terms",
+      "mode": "proposed firmware SDK; not shipped or installed by this audit",
+      "obligations": "Inventory per-target source, examples, binary blobs, submodules and compiler before generated firmware is distributed.",
+      "gate": "G-FIRMWARE",
+      "checkedAt": "2026-09-05",
+      "review": "inventory only; unresolved decisions remain gated"
+    },
+    {
+      "id": "cadquery",
+      "version": "UNSELECTED; deferred optional integration",
+      "source": "https://github.com/CadQuery/cadquery",
+      "declaredLicense": "UNRESOLVED at selected-version level; no selected version",
+      "mode": "not included; FreeCAD is the chosen first mechanical tool",
+      "obligations": "If introduced, review pinned CadQuery/OCP/OpenCASCADE dependency chain separately.",
+      "gate": "G-FREECAD",
+      "checkedAt": "2026-09-05",
+      "review": "inventory only; unresolved decisions remain gated"
+    },
+    {
+      "id": "codex-cli",
+      "version": "0.153.3 (configured executable observed)",
+      "source": "https://github.com/openai/codex/blob/rust-v0.153.3/LICENSE",
+      "declaredLicense": "Apache-2.0 source; executable provenance and service terms separate",
+      "mode": "external configured App Server executable; not bundled",
+      "obligations": "Pin and verify executable provenance; retain full source/binary notices if bundled. No account or model-service rights inferred.",
+      "gate": "G-PROVIDER",
+      "checkedAt": "2026-09-05",
+      "review": "inventory only; unresolved decisions remain gated"
+    },
+    {
+      "id": "openai-service",
+      "version": "UNPINNED account/service terms; fetched 2026-09-05",
+      "source": "https://openai.com/policies/services-agreement/",
+      "declaredLicense": "proprietary account-dependent service terms, not an OSS license",
+      "mode": "optional remote agent/image service through user's account",
+      "obligations": "Review exact applicable account agreement, usage, data transfer, brand and resale/embedding terms. No credential redistribution or access resale approval.",
+      "gate": "G-PROVIDER",
+      "checkedAt": "2026-09-05",
+      "review": "inventory only; unresolved decisions remain gated"
+    },
+    {
+      "id": "node",
+      "version": "22.23.0 (observed); supported engine >=22.13",
+      "source": "https://github.com/nodejs/node/blob/v22.23.0/LICENSE",
+      "declaredLicense": "MIT core plus bundled third-party licenses; binary audit pending",
+      "mode": "external runtime; not bundled by native build",
+      "obligations": "Include complete Node notices and audit crypto/ICU/etc if runtime is packaged later.",
+      "gate": "G-NATIVE",
+      "checkedAt": "2026-09-10",
+      "review": "inventory only; unresolved decisions remain gated"
+    },
+    {
+      "id": "python-observer",
+      "version": "3.12.11 (observed)",
+      "source": "https://docs.python.org/3.12/license.html",
+      "declaredLicense": "PSF and included third-party license texts",
+      "mode": "separately installed local venv; not bundled",
+      "obligations": "Versioned package metadata is in python-sbom.json. Interpreter/native wheel redistribution remains unapproved.",
+      "gate": "G-PYTHON",
+      "checkedAt": "2026-09-05",
+      "review": "inventory only; unresolved decisions remain gated"
+    },
+    {
+      "id": "python-kicad",
+      "version": "3.9.13 (observed)",
+      "source": "https://docs.python.org/3.9/license.html",
+      "declaredLicense": "PSF and included third-party license texts",
+      "mode": "runtime supplied by user's KiCad installation",
+      "obligations": "Part of external KiCad stack; review whole stack if bundled.",
+      "gate": "G-KICAD",
+      "checkedAt": "2026-09-05",
+      "review": "inventory only; unresolved decisions remain gated"
+    },
+    {
+      "id": "uv",
+      "version": "0.9.26 (ee4f00362)",
+      "source": "https://github.com/astral-sh/uv/tree/0.9.26",
+      "declaredLicense": "UNRESOLVED binary dependency/notice audit; upstream dual-license declaration not audited here",
+      "mode": "optional local setup tool; not bundled",
+      "obligations": "No requirement to bundle the installer. Review exact binary and subcomponents if distributing it.",
+      "gate": "G-NATIVE",
+      "checkedAt": "2026-09-05",
+      "review": "inventory only; unresolved decisions remain gated"
+    },
+    {
+      "id": "swift",
+      "version": "Apple Swift 6.3.3; swiftlang-6.3.3.1.3",
+      "source": "https://www.swift.org/legal/",
+      "declaredLicense": "open-source Swift terms plus Apple toolchain/platform terms; exact binary audit unresolved",
+      "mode": "local native compiler; not bundled",
+      "obligations": "Review any linked/redistributed Swift runtime and selected deployment platform before shipping.",
+      "gate": "G-NATIVE",
+      "checkedAt": "2026-09-05",
+      "review": "inventory only; unresolved decisions remain gated"
+    },
+    {
+      "id": "cocoa-webkit",
+      "version": "macOS 27.0 system frameworks (observed)",
+      "source": "https://www.apple.com/legal/sla/",
+      "declaredLicense": "Apple system-framework terms; mixed WebKit open-source components",
+      "mode": "system frameworks, not copied into app; native shell links them",
+      "obligations": "Review platform and signing requirements; do not redistribute system framework binaries as standalone assets.",
+      "gate": "G-NATIVE",
+      "checkedAt": "2026-09-05",
+      "review": "inventory only; unresolved decisions remain gated"
+    },
+    {
+      "id": "node-sqlite",
+      "version": "node:sqlite in Node 22.23.0; SQLite 3.51.3 observed",
+      "source": "https://github.com/nodejs/node/blob/v22.23.0/deps/sqlite/sqlite3.h",
+      "declaredLicense": "Node binding: MIT core; SQLite deliverable: public-domain dedication; Node binary has additional third-party components",
+      "mode": "Built-in local database binding from external Node runtime; no added npm package or bundled runtime",
+      "obligations": "Retain applicable Node notices if distributing its binding/runtime; SQLite upstream deliverable is dedicated to the public domain. Exact target binary and embedded components remain under G-NATIVE; no legal or distribution clearance.",
+      "gate": "G-NATIVE",
+      "checkedAt": "2026-09-10",
+      "review": "Local binding metadata and upstream declarations reviewed. Experimental Node API; release runtime audit remains open. See SQLITE_BINDING.md."
+    }
+  ],
+  "assets": [
+    {
+      "id": "codex-dispatch-allowlist-patch",
+      "version": "local candidate against rust-v0.153.4 commit 3d2ee51ca2d5db578f328aa75e20aa22c0197c9a",
+      "source": "https://github.com/openai/codex/tree/3d2ee51ca2d5db578f328aa75e20aa22c0197c9a",
+      "declaredLicense": "Apache-2.0 upstream source; local modifications identified in patches/README.md",
+      "mode": "private source/test candidate; no public fork or binary distribution",
+      "obligations": "Preserve upstream LICENSE/NOTICE, identify modifications and review the final derivative and service terms before any distribution. Existing product ownership/release gates remain open.",
+      "gate": "G-PROVIDER",
+      "paths": [
+        "docs/benchline/patches/codex-execution-allowlist.patch"
+      ],
+      "checkedAt": "2026-09-09"
+    },
+    {
+      "id": "codex-code-mode-protocol",
+      "version": "rust-v0.153.4; 3d2ee51ca2d5db578f328aa75e20aa22c0197c9a",
+      "source": "https://github.com/openai/codex/blob/3d2ee51ca2d5db578f328aa75e20aa22c0197c9a/codex-rs/code-mode-protocol/src/grpc/codex.code_mode.v1.proto",
+      "declaredLicense": "Apache-2.0",
+      "mode": "private version-pinned runtime candidate plus historical test compatibility copies; no external distribution",
+      "obligations": "Preserve accompanying upstream LICENSE and NOTICE; review exact protocol and provider terms again before distribution. No account-service rights inferred.",
+      "gate": "G-PROVIDER",
+      "paths": [
+        "server/vendor/code-mode-protocol/codex.code_mode.v1.proto",
+        "server/vendor/code-mode-protocol/LICENSE",
+        "server/vendor/code-mode-protocol/NOTICE",
+        "tests/fixtures/code-mode-protocol/codex.code_mode.v1.proto",
+        "tests/fixtures/code-mode-protocol/LICENSE",
+        "tests/fixtures/code-mode-protocol/NOTICE"
+      ],
+      "checkedAt": "2026-09-09"
+    },
+    {
+      "id": "benchline-source",
+      "version": "0.1.0; extracted base 606ee2d plus local changes",
+      "source": "local source and git history",
+      "declaredLicense": "UNLICENSED; ownership/provenance approval pending",
+      "mode": "source shipped only after owner decision",
+      "obligations": "Confirm authorship, extraction rights and contribution provenance; no automatic license choice.",
+      "gate": "G-OWNER",
+      "paths": [],
+      "checkedAt": "2026-09-05"
+    },
+    {
+      "id": "dm-sans",
+      "version": "UNPINNED Google Fonts response",
+      "source": "https://github.com/google/fonts/blob/main/ofl/dmsans/OFL.txt",
+      "declaredLicense": "OFL-1.1 declaration; exact delivered font binaries not pinned",
+      "mode": "remote CSS/font at browser runtime; not self-hosted",
+      "obligations": "Retain OFL if redistributed; verify font copyright/reserved-name terms and exact binary provenance before self-hosting.",
+      "gate": "G-FONTS",
+      "paths": [],
+      "checkedAt": "2026-09-05",
+      "resource": "https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap"
+    },
+    {
+      "id": "manrope",
+      "version": "UNPINNED Google Fonts response",
+      "source": "https://github.com/google/fonts/blob/main/ofl/manrope/OFL.txt",
+      "declaredLicense": "OFL-1.1 declaration; exact delivered font binaries not pinned",
+      "mode": "remote CSS/font at browser runtime; not self-hosted",
+      "obligations": "Retain OFL if redistributed; verify exact font files and naming restrictions. External loading is also a privacy decision.",
+      "gate": "G-FONTS",
+      "paths": [],
+      "checkedAt": "2026-09-05"
+    },
+    {
+      "id": "lucide-icons",
+      "version": "0.468.0",
+      "source": "node_modules/lucide-react/LICENSE",
+      "declaredLicense": "ISC with inherited Feather/MIT attribution",
+      "mode": "compiled UI vector icons via npm package",
+      "obligations": "Preserve actual notice including Feather lineage; package is also covered by npm inventory.",
+      "gate": "G-NPM",
+      "paths": [],
+      "checkedAt": "2026-09-05"
+    },
+    {
+      "id": "kicad-libraries",
+      "version": "UNSELECTED library revisions; user installed collections excluded",
+      "source": "https://www.kicad.org/libraries/license/",
+      "declaredLicense": "CC-BY-SA-4.0 with KiCad design-output exception",
+      "mode": "user/project library assets; no library collection shipped here",
+      "obligations": "Distinguish design use from redistribution of a library collection. Exact per-model overrides must be preserved.",
+      "gate": "G-ASSETS",
+      "paths": [],
+      "checkedAt": "2026-09-05"
+    },
+    {
+      "id": "vendor-datasheets",
+      "version": "NONE selected for Benchline distribution",
+      "source": "vendor-specific URL/revision required before import",
+      "declaredLicense": "UNRESOLVED; public download does not imply redistribution rights",
+      "mode": "future research inputs; none included",
+      "obligations": "Record manufacturer, document revision, source, permitted caching/use/redistribution and evidence per document.",
+      "gate": "G-ASSETS",
+      "paths": [],
+      "checkedAt": "2026-09-05"
+    },
+    {
+      "id": "vendor-footprints",
+      "version": "NONE selected for Benchline distribution",
+      "source": "vendor/library-specific source required",
+      "declaredLicense": "UNRESOLVED; no inherited blanket license",
+      "mode": "future symbol/footprint assets; none included",
+      "obligations": "Record exact asset and terms; copying KiCad library exceptions onto other vendors is prohibited.",
+      "gate": "G-ASSETS",
+      "paths": [],
+      "checkedAt": "2026-09-05"
+    },
+    {
+      "id": "vendor-step-models",
+      "version": "NONE selected for Benchline distribution",
+      "source": "vendor/model-provider-specific source required",
+      "declaredLicense": "UNRESOLVED",
+      "mode": "future STEP/3D assets; customer models excluded",
+      "obligations": "Record exact model revision, provenance, redistribution permission and modifications; no installed customer-model scan.",
+      "gate": "G-ASSETS",
+      "paths": [],
+      "checkedAt": "2026-09-05"
+    },
+    {
+      "id": "vendor-firmware-examples",
+      "version": "NONE selected for Benchline distribution",
+      "source": "SDK/vendor file-level source required",
+      "declaredLicense": "UNRESOLVED until exact file review",
+      "mode": "future code inputs; none copied",
+      "obligations": "SDK top-level license does not automatically cover every example or vendor binary.",
+      "gate": "G-FIRMWARE",
+      "paths": [],
+      "checkedAt": "2026-09-05"
+    },
+    {
+      "id": "ai-images",
+      "version": "NONE shipped; runtime renders excluded",
+      "source": "configured provider and source-reference terms required",
+      "declaredLicense": "provider/account and reference-image dependent",
+      "mode": "private generated runtime outputs only",
+      "obligations": "Rendering a board does not prove rights to distribute reference images, models or branding.",
+      "gate": "G-ASSETS",
+      "paths": [],
+      "checkedAt": "2026-09-05"
+    },
+    {
+      "id": "konnect-skills-templates",
+      "version": "0.11.0 context; none bundled in Benchline source",
+      "source": "https://github.com/mixelpixx/Konnect/tree/v0.11.0",
+      "declaredLicense": "AGPL-3.0 default; per-file terms need review",
+      "mode": "user-installed guidance/reference circuits; not part of Benchline release",
+      "obligations": "Do not copy external skills/templates into the product under an assumed MIT license.",
+      "gate": "G-KONNECT",
+      "paths": [],
+      "checkedAt": "2026-09-05"
+    },
+    {
+      "id": "editor-observation-kicad-patch",
+      "version": "incremental private candidate over 0feeca2a807f428ad2b3fa7c1e39625cb769f02c; before-file SHA-256 fbd1763f72f0dd0923740db7f4df089a9351841df0229fa580f7c3cbf57d3678",
+      "source": "private KiCad source checkout; pcbnew/api/api_handler_pcb.cpp; exact pins and scope in ../EDITOR_OBSERVATION.md",
+      "declaredLicense": "GPL-3.0-or-later in the modified upstream file header",
+      "mode": "private source and fixture qualification only; no redistribution approved",
+      "obligations": "Retain upstream copyright and license material, identify this incremental modification, and review the full derivative source, build and distribution boundary before release. No license election or clearance is made.",
+      "gate": "G-KICAD",
+      "paths": [
+        "docs/benchline/patches/editor-observation-kicad.patch"
+      ],
+      "checkedAt": "2026-09-10"
+    },
+    {
+      "id": "editor-observation-konnect-patch",
+      "version": "incremental private candidate over a22ad2153dcf45dbcf1cc63b5b0f1e40c93d7956; before-file SHA-256 4f7b505b05a049c65e76bead0401b4f6905000bf21c69be9fef5d963e5e95ada",
+      "source": "private Konnect source checkout; crates/konnect-core/src/tools/experimental_models.rs; exact pins and scope in ../EDITOR_OBSERVATION.md",
+      "declaredLicense": "AGPL-3.0-only declared in the private checkout Cargo.toml; upstream LICENSE retained there",
+      "mode": "private source and fixture qualification only; no redistribution approved",
+      "obligations": "Retain upstream copyright and license material, identify this incremental modification, and review the full derivative source, build and distribution boundary before release. No license election or clearance is made.",
+      "gate": "G-KONNECT",
+      "paths": [
+        "docs/benchline/patches/editor-observation-konnect.patch"
+      ],
+      "checkedAt": "2026-09-10"
+    }
+  ]
+}

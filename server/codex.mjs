@@ -1,72 +1,111 @@
-import { spawn, execFile } from 'node:child_process';
-import { createInterface } from 'node:readline';
-import { promisify } from 'node:util';
-import { config } from './config.mjs';
+import {StringDecoder} from 'node:string_decoder';
+import {requireProviderMode} from './provider-boundary.mjs';
 
+// Host-only protocol surface. Model callbacks cannot choose RPC methods. In
+// particular process/spawn, fs/*, shell, config writes and thread/resume are absent.
+const methods = new Set(['initialize', 'config/read', 'account/read', 'model/list',
+  'modelProvider/capabilities/read', 'thread/start', 'turn/start', 'turn/interrupt']);
+const accountMethods = new Set(['initialize', 'config/read', 'account/read', 'account/login/start', 'account/login/cancel', 'account/logout']);
+const transportError = () => Error('Provider transport failed; inspect the action journal before retrying');
 export class CodexAgent {
-  constructor({ cwd, url, token, toolPath, onEvent, onRequest, onStatus }) {
-    Object.assign(this, { cwd, url, token, toolPath, onEvent, onRequest, onStatus });
-    this.pending = new Map(); this.next = 0;
+  #accountOnly;
+  constructor({onEvent = () => {}, onStatus = () => {}, toolSession = null, accountOnly = false} = {}) {
+    this.#accountOnly = accountOnly === true;
+    Object.assign(this, {onEvent, onStatus, toolSession});
+    this.pending = new Map(); this.next = 0; this.closed = false; this.incoming = 0;
   }
   async connect() {
-    const binary = config.codex;
-    // Only this app's two MCP servers are enabled in this process; global settings are untouched.
-    const { stdout } = await promisify(execFile)(binary, ['mcp', 'list', '--json'], { maxBuffer: 4e6 });
-    const entries = JSON.parse(stdout);
-    const args = ['app-server'];
-    for (const entry of entries) {
-      const transport = entry.transport;
-      args.push('-c', `mcp_servers.${entry.name}.enabled=false`);
-      // Desktop-supplied definitions can be absent at app-server initialization,
-      // then reappear when a thread loads. Preserve each original transport type.
-      const field = transport.type === 'streamable_http' ? 'url' : 'command';
-      args.push('-c', `mcp_servers.${entry.name}.${field}=${JSON.stringify(transport[field])}`);
-    }
-    args.push('-c', `mcp_servers.konnect={command=${JSON.stringify(process.env.KONNECT_BIN || entries.find(e => e.name === 'konnect')?.transport.command || config.konnect)},enabled=true,required=true}`);
-    for (const key of ['KICAD_API_SOCKET', 'KICAD_API_TOKEN']) {
-      if (process.env[key]) args.push('-c', `mcp_servers.konnect.env.${key}=${JSON.stringify(process.env[key])}`);
-    }
-    args.push('-c', `mcp_servers.companion.command=${JSON.stringify(process.execPath)}`,
-      '-c', `mcp_servers.companion.args=${JSON.stringify([this.toolPath])}`,
-      '-c', `mcp_servers.companion.env=${JSON.stringify({COMPANION_URL:this.url,COMPANION_TOKEN:this.token}).replace(/"([^"\\]+)":/g, '"$1"=')}`);
-    this.process = spawn(binary, args, { cwd: this.cwd, stdio: ['pipe','pipe','pipe'], env: process.env });
-    let stderr = '';
-    this.process.stderr.on('data', b => { stderr = (stderr + b.toString()).slice(-4000); });
-    this.process.on('error', e => this.fail(e));
-    this.process.on('exit', code => this.fail(new Error(`Codex stopped (${code}). ${stderr.replaceAll(this.token, '[redacted]')}`)));
-    createInterface({ input: this.process.stdout }).on('line', line => {
-      try { this.receive(JSON.parse(line)); } catch { /* non-protocol diagnostics are not chat */ }
-    });
-    await this.request('initialize', { clientInfo: { name: 'kicad_companion', version: '0.1.0' } });
-    this.send({ method: 'initialized' });
-    const account = await this.request('account/read', {});
-    const capabilities = await this.request('modelProvider/capabilities/read', {}).catch(() => ({}));
-    this.onStatus({ connected: true, signedIn: Boolean(account.account), authType: account.account?.type || null, imageGeneration: capabilities.imageGeneration === true });
+    requireProviderMode('agent');
+    // The old inherited-profile/direct-Konnect launcher has been removed. Merely
+    // changing the feature guard cannot restore it. A reviewed production profile
+    // and explicit account setup must supply a qualified child via attach().
+    throw Error('No qualified production provider launch profile is configured');
   }
-  send(message) { this.process.stdin.write(JSON.stringify(message) + '\n'); }
-  request(method, params, timeout = 120000) {
+  attach(child) {
+    if (this.process || this.closed || !child?.stdin || !child.stdout || !child.stderr) throw transportError();
+    this.process = child;
+    let buffer = ''; const decoder = new StringDecoder('utf8');
+    child.stdout.on('data', chunk => {
+      if (this.closed) return;
+      buffer += decoder.write(chunk);
+      if (Buffer.byteLength(buffer) > 4 * 1024 * 1024) {this.fail(); return;}
+      let end;
+      while (!this.closed && (end = buffer.indexOf('\n')) !== -1) {
+        const line = buffer.slice(0, end); buffer = buffer.slice(end + 1);
+        try {Promise.resolve(this.receive(JSON.parse(line))).catch(() => this.fail());}
+        catch {this.fail();}
+      }
+    });
+    child.stdout.on('error', () => this.fail());
+    child.stdin.on('error', () => this.fail());
+    child.stderr.on('data', () => {}); // No credentials or raw diagnostics in UI errors.
+    child.on('error', () => this.fail());
+    child.on('exit', () => {if (!this.closed) this.fail();});
+    return this;
+  }
+  send(message) {
+    if (this.closed || !this.process?.stdin.writable) throw transportError();
+    const data = JSON.stringify(message);
+    if (Buffer.byteLength(data) > 1024 * 1024) throw transportError();
+    this.process.stdin.write(data + '\n');
+  }
+  request(method, params, timeout = 30000) {
+    if (this.closed || !(this.#accountOnly ? accountMethods : methods).has(method) || this.pending.size >= 128 ||
+        !Number.isInteger(timeout) || timeout < 1 || timeout > 60000) return Promise.reject(transportError());
     return new Promise((resolve, reject) => {
       const id = ++this.next;
-      const timer = setTimeout(() => { this.pending.delete(id); reject(new Error(`${method} timed out`)); }, timeout);
-      this.pending.set(id, { resolve, reject, timer });
-      this.send({ id, method, params });
+      const timer = setTimeout(() => this.fail(), timeout);
+      this.pending.set(id, {resolve, reject, timer});
+      try {this.send({id, method, params});} catch {this.fail();}
     });
   }
   receive(message) {
+    if (this.closed) return;
+    if (!message || typeof message !== 'object' || Array.isArray(message)) {this.fail(); return;}
     if (message.method) {
-      if (message.id !== undefined) this.onRequest(message);
-      else this.onEvent(message);
-      return;
+      if (message.id !== undefined) {
+        // No legacy approval fallback, even if no project session is attached.
+        if (this.#accountOnly || message.method !== 'item/tool/call' || !this.toolSession) {
+          this.send({id: message.id, error: {code: -32601, message: 'Only mediated Benchline tools are supported'}});
+          return;
+        }
+        if (++this.incoming > 32) {this.fail(); return;}
+        return Promise.resolve().then(() => this.toolSession.handle(message))
+          .then(result => {if (!this.closed) this.respond(message.id, result);})
+          .catch(() => this.fail()).finally(() => this.incoming--);
+      }
+      const lifecycle = this.toolSession?.handleEvent(message);
+      this.onEvent(message);
+      return lifecycle?.catch(() => this.fail());
     }
     const pending = this.pending.get(message.id);
     if (!pending) return;
     clearTimeout(pending.timer); this.pending.delete(message.id);
-    if (message.error) pending.reject(new Error(message.error.message)); else pending.resolve(message.result);
+    if (message.error) pending.reject(Error('Provider rejected the request'));
+    else pending.resolve(message.result);
   }
-  respond(id, result) { this.send({ id, result }); }
-  fail(error) {
-    for (const p of this.pending.values()) { clearTimeout(p.timer); p.reject(error); }
-    this.pending.clear(); this.onStatus({ connected: false, error: error.message });
+  respond(id, result) {this.send({id, result});}
+  fail() {
+    if (this.closed) return;
+    this.close().catch(() => {});
+    this.onStatus({connected: false, error: transportError().message});
   }
-  close() { this.process?.kill(); }
+  close() {
+    if (this.closing) return this.closing;
+    this.closed = true;
+    let resolve, reject;
+    this.closing = new Promise((yes, no) => {resolve = yes; reject = no;});
+    // Session.close invalidates synchronously, before process termination or I/O.
+    let cleanup;
+    try {cleanup = this.toolSession?.close();} catch (error) {cleanup = Promise.reject(error);}
+    for (const p of this.pending.values()) {clearTimeout(p.timer); p.reject(transportError());}
+    this.pending.clear();
+    if (this.process && this.process.exitCode === null && this.process.signalCode === null) {
+      const child = this.process; child.kill('SIGTERM');
+      const timer = setTimeout(() => {if (child.exitCode === null && child.signalCode === null) child.kill('SIGKILL');}, 2000);
+      timer.unref(); child.once('exit', () => clearTimeout(timer));
+    }
+    Promise.resolve(cleanup).then(resolve, reject);
+    return this.closing;
+  }
 }

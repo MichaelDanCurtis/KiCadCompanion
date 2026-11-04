@@ -15,9 +15,10 @@ test('Codex RPC resolves matching responses and separates server requests from n
   assert.equal((await response).account.type,'chatgpt');
   agent.receive({method:'turn/completed',params:{turn:{id:'a'}}});
   agent.receive({method:'item/commandExecution/requestApproval',id:80,params:{}});
-  assert.equal(events.length,1); assert.equal(requests.length,1);
+  assert.equal(events.length,1); assert.equal(requests.length,0);
+  assert.equal(sent.at(-1).error.code,-32601);
   const failure=agent.request('thread/start',{},2000);
   agent.receive({id:sent.at(-1).id,error:{message:'Model unavailable'}});
-  await assert.rejects(failure,/Model unavailable/);
+  await assert.rejects(failure,/Provider rejected/);
   assert.equal(agent.pending.size,0);
 });

@@ -1,0 +1,168 @@
+{
+  "schemaVersion": 1,
+  "product": "Benchline",
+  "planStatus": "implementation-started",
+  "updatedAt": "2026-09-15T14:50:55.047Z",
+  "note": "The overarching BL-01 through BL-14 Goal remains active. BL-01 through BL-06 retain their documented verification. BL-07 read-only DigiKey lookup is owner-authorized; BL-07-A4 awaits host-local credential setup and one successful redacted live read. ESP32-S3-EYE v2.2 remains selected. BL-08 A1-A5 are verified within the documented disposable/native scope: the connected reference is saved and reopened with three nets, six segments and one via; connected model-only assignment preserves the exported non-target board state and guarded Undo restores original models; populated fixtures cover front/back, hidden/missing, four DNP, library-field and failed-partial cases; and the actual render remains separately evidenced. Two earlier connected previews stalled before mutation and remain retained as unqualified findings. BL-09 is audited as awaiting-owner: compatible ESP-IDF releases are supported, but no concrete per-build toolchain manifest is recorded yet; the board electrical/pin contract still contains unresolved facts, and firmware behavior requirements are undefined; a fail-closed pending contract and evidence record capture the smallest unlock. BL-10 is audited as awaiting-owner because the approved assembly envelope and numeric clearances are unresolved; FreeCAD 1.1.3 is owner-confirmed and native qualification is partial. Blender 5.2.1 LTS is installed for optional asset preparation. BL-11 is audited as awaiting-owner because no application brief or shared firmware/device protocol exists; pending mechanical and application contracts preserve these gates without inventing requirements. BL-12 is audited as awaiting-owner because no frozen cross-discipline scenario exists. BL-13 is awaiting-human for an exact unit, flash/power plan, equipment and owner measurements. BL-14 is awaiting-user for the completed software/physical inputs needed for the approved private-preview journey; disposable install/build/runtime/uninstall/rollback rehearsals pass within their bounded scope, while current Vite build, license inventory and review scan do not constitute a candidate. The private saved-netlist bridge remains experimental and its follow-on Redo defect is retained; production ActionGate netlist Apply and physical ESP32 carrier readiness remain unqualified. No customer CAD write, credential action, customer installation, deployment or acceptance promotion occurred. All twelve release gates remain open. BL-09 now also has a fail-closed complete-contract validator and five focused synthetic rejection/acceptance tests; this is validation infrastructure only and does not resolve the real SDK, behavior, pin or electrical gates. Official Espressif v2.2 GPIO/revision guidance was reread and retained as a source receipt; it supports reserved-pin/revision validation but does not close the complete carrier pin or electrical contract. The production UI now exposes a read-only BL-09 Firmware readiness panel that separately reports contract, Generated, Built and Device-tested states; an isolated browser receipt records the pending contract and clean shutdown. BL-09 also has a fail-closed firmware artifact hygiene checker/CLI and synthetic tests for credentials, private keys, machine paths and non-relative locators; no pilot firmware artifact or approved SDK build exists. Final current checks after the UI and artifact-hygiene increments: 327 tests pass, Vite build passes, 291 npm entries/140 notices reconcile, and review scan passes with 272 working-tree files. The artifact hygiene checker is now exposed as npm run firmware:check-artifacts; a disposable candidate scan passes and a credential-bearing file is rejected. BL-10 now has a fail-closed mechanical contract validator and production UI readiness surface with separate FreeCAD document, dimension-check and fit states; synthetic tests and an isolated browser receipt pass, while the approved envelope and FreeCAD remain absent. BL-11 now has a strict versioned application-protocol validator and production UI readiness surface; synthetic tests and an isolated browser receipt pass, while the approved app brief, shared firmware client, simulator and device remain absent. BL-12 now has a strict cross-discipline scenario validator and production Verification readiness surface; synthetic tests and an isolated browser receipt pass, while the actual baseline, thresholds and dependent artifacts remain unfrozen. Current full checks after BL-12: 339 tests pass, Vite build, license inventory, review scan and diff check pass. BL-13 increment: a strict physical-acceptance validator and pending ESP32-S3-EYE v2.2 record now reject absent unit identity, flash/power authorization, power limits, equipment, operator measurements, fit observations, simulated evidence and unresolved failures; the production Verification workspace exposes a read-only Physical acceptance readiness panel. Four focused synthetic tests pass, but no real unit, hardware action or human measurement exists. Current full checks after BL-13: 343 tests pass, Vite build, license inventory, review scan and diff check pass. BL-14 increment: a strict private-preview candidate validator, pending candidate record, CLI check and Verification UI readiness panel now require accepted BL-12/BL-13 revisions, distinct package artifacts, fresh install/uninstall, rollback, privacy/SBOM checks, support claims and owner decisions. The pending record and isolated browser journey fail closed with 11 blockers; no package install or publication occurred. Current full checks after BL-14 preparation: 349 tests pass, Vite build, license inventory, review scan and diff check pass. BL-14 package rehearsal increment: an explicit npm allowlist produced a 132-file benchline-0.1.0.tgz and a native bundle in ignored runtime; the rehearsal excluded Serena metadata, plans, tests and evidence, and the scoped privacy scan passed. The native launch configuration was found to embed absolute checkout/Node/Konnect/state paths, so it remains non-distributable until portability is fixed. No install, publication or customer-file action occurred. BL-14 package rehearsal follow-up: the allowlisted archive now includes the pending discipline inputs required for a clean extracted build. A disposable extract installed 241 dependencies and rebuilt with Vite 6.4.3; the scoped package privacy scan passed. Approved sample journey, tool discovery, uninstall and rollback remain unrun, and native launch.json absolute paths still block distribution. BL-14 extracted-runtime follow-up: the allowlisted archive launched on an isolated loopback port, created only a synthetic sample project, and rendered the real Verification physical/release readiness panels with execution disabled. The server stopped cleanly and the disposable fixture was removed; approved software journey, tool discovery, uninstall and rollback remain incomplete. BL-14 receipt correction: final allowlisted archive count and hash were revalidated after adding pending discipline inputs; all package, install/build and runtime-UI receipts now refer to the 132-file archive. No acceptance status changed. BL-14 release-gate report: npm run licenses:release-check exited 1 as designed and retained twelve named owner/dependency/tool/provider/asset/firmware/native gates in .runtime/bl14-release-check.log; no release decision was waived. BL-14 uninstall/rollback drill increment: final 132-file archive installed and rebuilt in a disposable checkout, created one synthetic project with execution disabled, stopped cleanly, and was removed without touching a separate sentinel or isolated state. Re-extraction on a fresh state started successfully with zero imported projects; cross-checkout state reuse was rejected by the ownership guard. Receipt: .runtime/bl14-package-rehearsal/uninstall-rollback-receipt.json. BL-14 remains incomplete pending the approved BL-12/BL-13 inputs and owner release decisions. BL-09 source revalidation: current Espressif v2.2 guide reconfirms the main/sub-board assembly, GPIO3-only LED configuration warning, v2.2 marking and R83 change; it still does not select Benchline behavior, exact SDK/toolchain, carrier electrical limits or enclosure geometry. Receipt: .runtime/bl09-official-source-recheck.json. Consolidated owner input packet added at docs/benchline/OWNER_INPUTS.md, covering deferred BL-07-A4 sourcing, firmware, mechanical, application, integration, physical and release decisions without inventing values. BL-14 final package refresh: adding the roadmap audit checker produced the 133-file archive SHA-256 338aafb9cfcbd06be2c30d2c0c1be17fc818f3f42ce8e8b77c70cfd37767f074; fresh extracted install/build, UI opening, uninstall and rollback were rerun against that archive. Earlier 132-file receipts remain historical and the current receipts supersede them. Candidate acceptance remains open. Roadmap audit increment: scripts/check-roadmap.mjs and npm run roadmap:check now validate 14 goals, 70 acceptance IDs, dependency graph, evidence matrices and verified-state rules; current audit summary is .runtime/roadmap-audit-summary.json. Full regression now passes 351 tests; build, license, review and diff checks pass. BL-14 reproducibility lock increment: npm-shrinkwrap.json was added because npm excludes package-lock.json from tarballs; final archive now has 134 files, SHA-256 c83db78a16fe0ea7744e5c8cf86b7a5bfca52bc3752f130184012bbee4d6be3e. Fresh npm ci/install, build, UI opening, uninstall and rollback were rerun against that archive; receipts supersede earlier 132/133-file records. BL-14 final hash manifest increment: every file in the 134-file locked archive was hashed and privacy/path-scanned; manifest matches SHA-256 c83db78a... and confirms shrinkwrap plus SBOM inclusion. Owner release gates remain open. BL-14 final locked-package sample UI journey: synthetic brief saved at revision 1 and advanced to the proposed eight-step build plan in an isolated browser; plan approval was not executed, and all fixtures were removed after clean SIGINT shutdown. Receipt: .runtime/bl14-package-rehearsal/runtime-ui-receipt-final.json. BL-10 native-tool increment: FreeCAD 1.1.3 was installed and a disposable synthetic native document was created, reopened, manually edited, stale-proposal rejection observed, and STEP/STL exports produced; approved ESP32-S3-EYE assembly geometry remains unresolved and BL-10 stays awaiting-user. Current post-FreeCAD checks: 351 tests pass, build, license inventory, review scan and diff check pass; native evidence remains synthetic and BL-10 is not promoted. BL-14 package refresh: rebuilt current archive after FreeCAD support update (134 files, SHA-256 4f57dbb685509ba76c353710f8ba3a4e576e1d2be1cb1a2432f86486d0c2dee8); fresh extracted install/build, loopback state check, rollback, and synthetic UI plan journey passed with execution and approval untouched. Final hash-manifest metadata now records the all-file privacy/path scan scope plus explicit SBOM and notices inclusion for the current 134-file archive. BL-10 evidence metadata was refreshed after the native/tool/package checks; no acceptance status was promoted. BL-10 native fixture now includes explicit synthetic dimension checks and STEP/STL reimport-bound matching tied to the edited document revision; pilot geometry remains unresolved. BL-10 coordinate increment: pure board-to-enclosure transforms and four focused rotation, bottom-side, mm/inch and validation tests pass; owner-approved coordinates and assembled envelope remain unresolved. BL-14 package refresh after the coordinate utility: current archive is 135 files, SHA-256 a1b7a50b..., with fresh extracted install/build, rollback, loopback state, and synthetic UI plan journey rerun; release gates remain open. Current full regression after coordinate/package increments is 355 tests passing; build, license, review, roadmap and diff checks pass, with BL-10 still awaiting approved pilot geometry. Owner-directed BL-07 deferral is now recorded explicitly; its criteria remain intact. A disposable ESP-IDF v5.4.4 source/toolchain observation passed for ESP32-S3, but no firmware build or hardware action was run and BL-09 remains awaiting-owner. Official Espressif dimension drawings were revalidated for the 30.00 x 60.00 mm main-board outline and 30.00 x 31.90 mm sub-board outline; assembled envelope, protrusions, clearances and fit remain unresolved. A disposable ESP-IDF v5.4.4 ESP32-S3 hello_world host smoke build passed and produced hashed images; it is generic toolchain evidence only and does not authorize pilot firmware or hardware. Current full regression after the disposable ESP-IDF smoke-build evidence and deferred-state test update is 355/355 passing. The current official ESP-WHO ESP32-S3-EYE example configuration declares ESP-IDF 5.5.5; this is recorded as a compatibility observation and does not select the Benchline SDK or behavior. Fresh regression remains 355/355 passing and Vite build passes. BL-14 portability drill: the current 135-file package was extracted into a separate temporary checkout, npm dependencies installed, the native wrapper built and signed, and its launch configuration contained no path back to the Benchline source tree; host-specific dependency paths and owner portability decisions remain open. Fresh validation after the native portability drill is 355/355 tests passing with Vite build, roadmap audit, review scan and diff check passing. BL-14 relative-launcher increment: the current 135-file archive (SHA-256 64213ea02428f701519345602622e048c5cb4afec8a14bee0f20b5214d325967) was extracted outside the source tree; clean dependency install, native build/signing, two isolated server rehearsals and fresh-state rollback passed with no source-path leakage. Superseding v2 receipts and hash manifest are retained under .runtime/bl14-package-rehearsal/. Native app launch, cross-platform support, approved BL-12/BL-13 inputs and owner release decisions remain open. A current machine-readable completion audit is retained at .runtime/roadmap-completion-audit.json; it maps all 70 acceptance IDs, preserves BL-07 as deferred, and lists the exact human unlocks for BL-09 through BL-14 without promoting incomplete work. Owner-input revalidation at 2026-09-11T20:12:00Z found no changes to the firmware, mechanical or application unlocks; the goal remains active and no unsupported requirement was inferred. BL-14 evidence matrix was corrected to reflect the current 135-file portable-launcher archive while retaining earlier package findings as historical. BL-07 source-retrieval documentation now consistently identifies the owner-directed deferral and keeps live A4 qualification awaiting-human. Current production browser fixture was repaired for the intentional event-stream connection (DOM readiness replaces networkidle) and rerun: 19 checks pass with Chrome 152.0.7977.84, no page errors and clean server shutdown; receipt .runtime/bl14-package-rehearsal/runtime-ui-receipt-v3.json. This is readiness/UI evidence only. BL-14 candidate validation now reports the intentional pending record as five actionable blockers without schema noise; the packaged validator was rebuilt and fresh extracted install/native build passed for the 135-file archive SHA-256 6565801472783c317dc4c22274924727c4800bd1fd9b5dcf372bcb494fd11972. The current candidate:check receipt was refreshed after the pending-record diagnostic fix; it exits 1 and reports five bounded blockers without granting install or publication authority. BL-14 current-facing evidence text was aligned with the latest 135-file archive; older package hashes are explicitly historical. BL-14 acceptance matrix now points to the latest v3 package/hash-manifest archive SHA-256 6565801472783c317dc4c22274924727c4800bd1fd9b5dcf372bcb494fd11972; dated historical hashes remain preserved. Post-validator release checks pass: 358/358 tests, Vite build, 291-entry/140-notice license reconciliation, review scan and diff check; twelve release gates remain open. BL-14 INSTALL/SUPPORT now document bundle-relative native launcher metadata and host-local tool prerequisites; v4 package refresh (135 files, SHA-256 26aa65f15bfeb6e0bffd2914b85c1d968c3674be99010dd7fdb4c72cd8ddfad5) passed fresh extracted install/native build. BL-14 A2 receipt labels now match the v4 package/hash-manifest filenames and archive hash. BL-14 INSTALL now matches the shrinkwrap-backed npm ci rehearsal command; v5 package refresh (135 files, SHA-256 ee77805366ef8b891d17a1c03740d21a338ec0147ca2e5c059fba19a719239e8) passed fresh extracted install/native build. Completion audit refreshed with current owner-input hashes and v5 package hash; no owner inputs changed and open goals remain BL-09 through BL-14. Completion audit refreshed at 2026-09-12T00:32:00Z with current owner-input hashes and v5 package hash; no owner inputs changed. Owner input update: DigiKey read-only lookup is authorized; BL-07-A4 now awaits only host-local credential configuration and one successful redacted live read. The owner also decided that no single ESP-IDF release is a product requirement: compatible releases are supported, while each reproducible pilot build still records its concrete toolchain. FreeCAD 1.1.3 is owner-confirmed for the pilot host, and Blender 5.2.1 is installed for optional asset preparation. These decisions do not supply firmware behavior/pin/electrical requirements, assembled mechanical geometry, a live lookup receipt, or physical acceptance. The private archive was refreshed as v6 after these owner inputs: 135 files, SHA-256 f7f887d805af5c64994db51a588ef271531d17a1c03740d21a338ec0147ca2e5c059fba19a719239e8; hash manifest v6 records all-file scan and SBOM/notices inclusion. Fresh extracted v6 package install/build rehearsal also passed (npm ci and Vite build exit 0) and the disposable checkout was removed; current full regression is 359 tests passing. The compatibility validator and visible SDK policy were packaged in v7 (136 files, SHA-256 156f30c9b5f4a902a68ec72f48034081dc5e2970517706bd20a4fa20d5a811f1); the package remains private and non-candidate pending BL-12/BL-13 and owner release gates. Current full regression after compatibility-policy work is 363 tests passing; Vite build, license inventory, review scan, roadmap audit and diff check pass. Metadata-only recheck found no BENCHLINE_DIGIKEY registration or DigiKey credential environment variables; no credential values were read and BL-07-A4 remains awaiting-user. Read-only source-drawing recheck did not establish approved assembled geometry or coordinates; inferred values were not promoted. The active goal remains open for owner inputs. Third unchanged-input checkpoint recorded: no DigiKey host registration or live read and no new downstream owner inputs; the overarching Goal is now blocked pending external input. Portal recheck 2026-09-15: the signed-in DigiKey portal confirms Benchline Product Research is Approved and ProductInformation V4 is Enabled; credentials remained masked and were not read or copied. BL-07-A4 still requires host-local credential configuration and one successful redacted live read. BL-07-A4 is now verified: the approved private DigiKey credential file passed validation and one exact-match read-only ProductInformation V4 observation for ESP32-S3-EYE v2.2 was retrieved; credentials remain outside project/export and no cart/order action occurred. The separate API terms/data-retention review remains open for broader release decisions.",
+  "goals": [
+    {
+      "id": "BL-01",
+      "title": "Establish the standalone Benchline foundation",
+      "dependsOn": [],
+      "state": "verified",
+      "contract": "goals/BL-01.md",
+      "evidence": "evidence/BL-01.md"
+    },
+    {
+      "id": "BL-02",
+      "title": "Inventory licenses and commercial dependencies",
+      "dependsOn": [
+        "BL-01"
+      ],
+      "state": "verified",
+      "contract": "goals/BL-02.md",
+      "evidence": "evidence/BL-02.md"
+    },
+    {
+      "id": "BL-03",
+      "title": "Create the versioned product-project model",
+      "dependsOn": [
+        "BL-01"
+      ],
+      "state": "verified",
+      "contract": "goals/BL-03.md",
+      "evidence": "evidence/BL-03.md"
+    },
+    {
+      "id": "BL-04",
+      "title": "Enforce tool capabilities and approval boundaries",
+      "dependsOn": [
+        "BL-02",
+        "BL-03"
+      ],
+      "state": "verified",
+      "contract": "goals/BL-04.md",
+      "evidence": "evidence/BL-04.md"
+    },
+    {
+      "id": "BL-05",
+      "title": "Build the adaptable Benchline workspace",
+      "dependsOn": [
+        "BL-03",
+        "BL-04"
+      ],
+      "state": "verified",
+      "contract": "goals/BL-05.md",
+      "evidence": "evidence/BL-05.md"
+    },
+    {
+      "id": "BL-06",
+      "title": "Implement durable plan execution and evidence",
+      "dependsOn": [
+        "BL-03",
+        "BL-04"
+      ],
+      "state": "verified",
+      "contract": "goals/BL-06.md",
+      "evidence": "evidence/BL-06.md"
+    },
+    {
+      "id": "BL-07",
+      "title": "Build reviewed module packages and BOM research",
+      "dependsOn": [
+        "BL-02",
+        "BL-03",
+        "BL-04"
+      ],
+      "state": "verified",
+      "contract": "goals/BL-07.md",
+      "evidence": "evidence/BL-07.md"
+    },
+    {
+      "id": "BL-08",
+      "title": "Prove safe electronics authoring and model assignment",
+      "dependsOn": [
+        "BL-04",
+        "BL-06",
+        "BL-07"
+      ],
+      "state": "verified",
+      "contract": "goals/BL-08.md",
+      "evidence": "evidence/BL-08.md"
+    },
+    {
+      "id": "BL-09",
+      "title": "Generate and verify firmware offline",
+      "dependsOn": [
+        "BL-04",
+        "BL-06",
+        "BL-07"
+      ],
+      "state": "awaiting-user",
+      "contract": "goals/BL-09.md",
+      "evidence": "evidence/BL-09.md"
+    },
+    {
+      "id": "BL-10",
+      "title": "Create editable FreeCAD enclosures with revision checks",
+      "dependsOn": [
+        "BL-04",
+        "BL-06",
+        "BL-07",
+        "BL-08"
+      ],
+      "state": "awaiting-user",
+      "contract": "goals/BL-10.md",
+      "evidence": "evidence/BL-10.md"
+    },
+    {
+      "id": "BL-11",
+      "title": "Connect an application frontend to a device simulator",
+      "dependsOn": [
+        "BL-04",
+        "BL-06",
+        "BL-09"
+      ],
+      "state": "awaiting-user",
+      "contract": "goals/BL-11.md",
+      "evidence": "evidence/BL-11.md"
+    },
+    {
+      "id": "BL-12",
+      "title": "Verify the cross-discipline software workflow",
+      "dependsOn": [
+        "BL-05",
+        "BL-06",
+        "BL-08",
+        "BL-09",
+        "BL-10",
+        "BL-11"
+      ],
+      "state": "awaiting-user",
+      "contract": "goals/BL-12.md",
+      "evidence": "evidence/BL-12.md"
+    },
+    {
+      "id": "BL-13",
+      "title": "Complete human-assisted physical acceptance",
+      "dependsOn": [
+        "BL-12"
+      ],
+      "state": "awaiting-user",
+      "contract": "goals/BL-13.md",
+      "evidence": "evidence/BL-13.md"
+    },
+    {
+      "id": "BL-14",
+      "title": "Prepare a distributable private preview candidate",
+      "dependsOn": [
+        "BL-02",
+        "BL-12",
+        "BL-13"
+      ],
+      "state": "awaiting-user",
+      "contract": "goals/BL-14.md",
+      "evidence": "evidence/BL-14.md"
+    }
+  ]
+}

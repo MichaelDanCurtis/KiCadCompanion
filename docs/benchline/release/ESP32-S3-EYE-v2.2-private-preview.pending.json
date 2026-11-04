@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "status": "awaiting-owner",
+  "target": {"vendor": "Espressif Systems", "model": "ESP32-S3-EYE", "hardwareRevision": "v2.2"},
+  "candidateRevision": null,
+  "sourceRevision": null,
+  "package": null,
+  "environment": null,
+  "privacy": null,
+  "softwareJourney": null,
+  "rollback": null,
+  "prerequisites": null,
+  "release": null,
+  "simulatedValuesPresent": true,
+  "blockers": [
+    "BL-12 software scenario is not accepted",
+    "BL-13 physical acceptance is not complete",
+    "versioned package archive and hash manifest are absent",
+    "fresh install, uninstall and rollback observations are absent",
+    "privacy, SBOM and owner review records are absent"
+  ]
+}

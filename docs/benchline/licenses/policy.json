@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "reviewedAt": "2026-09-10",
+  "reviewedLockSha256": "e0f71412c59c446672346f40b7279b7be5a98f88b133ded48e43aff3d07bfbc6",
+  "purpose": "Metadata and notice inventory review only; not commercial approval. A changed lockfile requires an explicit new inventory review, not just regeneration.",
+  "preference": ["MIT", "BSD-2-Clause", "BSD-3-Clause", "ISC", "Apache-2.0"],
+  "copyleft": "Individual review of exact license, modifications, linking, distribution and network-service mode. An MIT wrapper does not change another component's obligations.",
+  "unknown": "Block unclassified additions. Explicit findings may complete this audit but cannot clear a release gate.",
+  "noticeGaps": {
+    "node_modules/@esbuild/darwin-arm64@0.25.12": "Installed build-only binary package has no own license file. Parent esbuild notice retained; full binary provenance and embedded-code notices unresolved. Must not ship without review.",
+    "node_modules/@rollup/rollup-darwin-arm64@4.63.1": "Installed build-only binary package has no own license file. Parent Rollup notice retained; native Rust dependencies and binary notices unresolved. Must not ship without review."
+  },
+  "licenses": {
+    "MIT": {"classification":"permissive-declared","obligations":"Preserve applicable copyright and permission notices; audit embedded code independently.","gate":"G-NPM"},
+    "ISC": {"classification":"permissive-declared","obligations":"Retain copyright and permission notice, including inherited Feather notices in Lucide.","gate":"G-NPM"},
+    "BSD-2-Clause": {"classification":"permissive-declared","obligations":"Retain copyright, conditions and disclaimer in source and binary distribution materials.","gate":"G-NPM"},
+    "BSD-3-Clause": {"classification":"permissive-declared","obligations":"Retain notices and disclaimer; observe the non-endorsement condition.","gate":"G-NPM"},
+    "Apache-2.0": {"classification":"permissive-declared","obligations":"Include license, preserve applicable attribution/NOTICE, identify modifications; review patent and trademark conditions.","gate":"G-NPM"},
+    "Python-2.0": {"classification":"legacy-license-review","obligations":"argparse carries historical Python license texts; retain the complete supplied license and review all applicable terms.","gate":"G-NPM"},
+    "(MPL-2.0 OR Apache-2.0)": {"classification":"dual-license-choice-pending","obligations":"DOMPurify offers alternatives. Preserve both supplied texts for inventory; owner/legal review must document the distribution choice. No election made here.","gate":"G-NPM"}
+  }
+}

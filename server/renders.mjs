@@ -93,6 +93,7 @@ export class RenderStore {
     job.status='running';job.stage='Checking component model assignments';await this.save(job);
     try {const log=await this.run(process.env.KICAD_PYTHON||python,[join(this.appRoot,'server/model-audit.py'),job.board],env);
       job.models=JSON.parse(log.trim().split('\n').findLast(line=>line.startsWith('{')));
+      if(job.models.schemaVersion!==2)throw new Error('Unsupported model coverage format');
     }catch(e){job.models={error:`Model coverage could not be verified: ${e.message}`};}
     job.stage='Ray tracing in KiCad';await this.save(job);
     const args=['pcb','render',job.board,'-o',this.path(job.id),'--width','1600','--height','1000','--quality',job.options.quality,'--background','opaque'];
@@ -102,6 +103,12 @@ export class RenderStore {
     if(job.options.camera==='perspective')args.push('--perspective','--rotate','325,0,30','--zoom','0.7');
     job.log=await this.run(process.env.KICAD_CLI||cli,args,env);
     pngBytes((await readFile(this.path(job.id))).toString('base64'));
+    if(job.models.schemaVersion===2){
+      const log=await this.run(process.env.KICAD_PYTHON||python,[join(this.appRoot,'server/model-audit.py'),job.board],env);
+      const after=JSON.parse(log.trim().split('\n').findLast(line=>line.startsWith('{')));
+      if(JSON.stringify(after)!==JSON.stringify(job.models))throw new Error('Model assignments or files changed during rendering. Discarded result; render again.');
+      job.modelInputsVerified=true;
+    }
     if((await fingerprint(job.board)).sha256!==job.source.sha256)throw new Error('Board changed during rendering. Discarded result; render again.');
     job.status='completed';job.stage='Ready';job.completedAt=new Date().toISOString();await this.save(job);
   }
