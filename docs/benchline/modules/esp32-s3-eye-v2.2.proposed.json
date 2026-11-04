@@ -1,0 +1,1334 @@
+{
+  "schemaVersion": 1,
+  "id": "4b3f7eeb-dbae-4d5e-acbc-4771c9f0cfc4",
+  "identity": {
+    "vendor": {
+      "value": "Espressif Systems",
+      "unit": null,
+      "status": "proposed",
+      "sources": [
+        {
+          "sourceId": "7f12cc9b-2588-4fc8-9168-76a7b5f90121",
+          "locator": "Introduction; manufacturer"
+        }
+      ],
+      "note": ""
+    },
+    "model": {
+      "value": "ESP32-S3-EYE",
+      "unit": null,
+      "status": "proposed",
+      "sources": [
+        {
+          "sourceId": "7f12cc9b-2588-4fc8-9168-76a7b5f90121",
+          "locator": "Title and section 1.1"
+        }
+      ],
+      "note": ""
+    },
+    "hardwareRevision": {
+      "value": "v2.2",
+      "unit": null,
+      "status": "proposed",
+      "sources": [
+        {
+          "sourceId": "4b382253-b0e7-470b-9879-b5dfaa7db064",
+          "locator": "Title block; Rev 2.2"
+        }
+      ],
+      "note": "User selected v2.2 for the pilot on 2026-09-10. This does not identify or inspect a physical unit."
+    }
+  },
+  "pinInventoryComplete": {
+    "value": false,
+    "unit": null,
+    "status": "proposed",
+    "sources": [
+      {
+        "sourceId": "4b382253-b0e7-470b-9879-b5dfaa7db064",
+        "locator": "Sheets 2-4"
+      }
+    ],
+    "note": "Partial inventory: MB.J8 and MB.J9 only. USB, camera, battery, SD, test pads and module pads require further review."
+  },
+  "pins": [
+    {
+      "id": "d79706ac-72fd-4484-9e14-42145d579701",
+      "number": "MB.J8.1",
+      "name": {
+        "value": "VDD_3V3",
+        "unit": null,
+        "status": "proposed",
+        "sources": [
+          {
+            "sourceId": "4b382253-b0e7-470b-9879-b5dfaa7db064",
+            "locator": "Sheet 4, 04_Interface, 1.3 INCH LCD, MB.J8 pin 1"
+          }
+        ],
+        "note": ""
+      },
+      "interfaces": {
+        "value": [
+          "Power"
+        ],
+        "unit": null,
+        "status": "proposed",
+        "sources": [
+          {
+            "sourceId": "4b382253-b0e7-470b-9879-b5dfaa7db064",
+            "locator": "Sheet 4, MB.J8 pin 1"
+          }
+        ],
+        "note": "Existing main-to-display board interconnect; not an unused expansion header."
+      },
+      "reserved": {
+        "value": true,
+        "unit": null,
+        "status": "proposed",
+        "sources": [
+          {
+            "sourceId": "4b382253-b0e7-470b-9879-b5dfaa7db064",
+            "locator": "Sheet 4, MB.J8 interconnect"
+          }
+        ],
+        "note": "Reserve existing interconnect until electrical loading, boot strapping and downstream functions are reviewed."
+      },
+      "maxVoltageV": {
+        "value": null,
+        "unit": "V",
+        "status": "unknown",
+        "sources": [],
+        "note": "Absolute pin limit is not established by a nominal net label; review attached devices and power domain."
+      },
+      "maxCurrentMA": {
+        "value": null,
+        "unit": "mA",
+        "status": "unknown",
+        "sources": [],
+        "note": "No connector or board-level current budget verified."
+      }
+    },
+    {
+      "id": "ad02b262-20a1-4a47-81bf-27115a8144aa",
+      "number": "MB.J8.2",
+      "name": {
+        "value": "DGND",
+        "unit": null,
+        "status": "proposed",
+        "sources": [
+          {
+            "sourceId": "4b382253-b0e7-470b-9879-b5dfaa7db064",
+            "locator": "Sheet 4, 04_Interface, 1.3 INCH LCD, MB.J8 pin 2"
+          }
+        ],
+        "note": ""
+      },
+      "interfaces": {
+        "value": [
+          "Ground"
+        ],
+        "unit": null,
+        "status": "proposed",
+        "sources": [
+          {
+            "sourceId": "4b382253-b0e7-470b-9879-b5dfaa7db064",
+            "locator": "Sheet 4, MB.J8 pin 2"
+          }
+        ],
+        "note": "Existing main-to-display board interconnect; not an unused expansion header."
+      },
+      "reserved": {
+        "value": true,
+        "unit": null,
+        "status": "proposed",
+        "sources": [
+          {
+            "sourceId": "4b382253-b0e7-470b-9879-b5dfaa7db064",
+            "locator": "Sheet 4, MB.J8 interconnect"
+          }
+        ],
+        "note": "Reserve existing interconnect until electrical loading, boot strapping and downstream functions are reviewed."
+      },
+      "maxVoltageV": {
+        "value": null,
+        "unit": "V",
+        "status": "unknown",
+        "sources": [],
+        "note": "Absolute pin limit is not established by a nominal net label; review attached devices and power domain."
+      },
+      "maxCurrentMA": {
+        "value": null,
+        "unit": "mA",
+        "status": "unknown",
+        "sources": [],
+        "note": "No connector or board-level current budget verified."
+      }
+    },
+    {
+      "id": "01d8a99f-c0c9-43c8-8cb6-0a2589d401fb",
+      "number": "MB.J8.3",
+      "name": {
+        "value": "IO0",
+        "unit": null,
+        "status": "proposed",
+        "sources": [
+          {
+            "sourceId": "4b382253-b0e7-470b-9879-b5dfaa7db064",
+            "locator": "Sheet 4, 04_Interface, 1.3 INCH LCD, MB.J8 pin 3"
+          }
+        ],
+        "note": ""
+      },
+      "interfaces": {
+        "value": [
+          "GPIO0",
+          "Boot strapping"
+        ],
+        "unit": null,
+        "status": "proposed",
+        "sources": [
+          {
+            "sourceId": "4b382253-b0e7-470b-9879-b5dfaa7db064",
+            "locator": "Sheet 4, MB.J8 pin 3"
+          }
+        ],
+        "note": "Existing main-to-display board interconnect; not an unused expansion header."
+      },
+      "reserved": {
+        "value": true,
+        "unit": null,
+        "status": "proposed",
+        "sources": [
+          {
+            "sourceId": "4b382253-b0e7-470b-9879-b5dfaa7db064",
+            "locator": "Sheet 4, MB.J8 interconnect"
+          }
+        ],
+        "note": "Reserve existing interconnect until electrical loading, boot strapping and downstream functions are reviewed."
+      },
+      "maxVoltageV": {
+        "value": null,
+        "unit": "V",
+        "status": "unknown",
+        "sources": [],
+        "note": "Absolute pin limit is not established by a nominal net label; review attached devices and power domain."
+      },
+      "maxCurrentMA": {
+        "value": null,
+        "unit": "mA",
+        "status": "unknown",
+        "sources": [],
+        "note": "No connector or board-level current budget verified."
+      }
+    },
+    {
+      "id": "5afa6085-7364-4050-940c-b98774bf3c15",
+      "number": "MB.J8.4",
+      "name": {
+        "value": "DGND",
+        "unit": null,
+        "status": "proposed",
+        "sources": [
+          {
+            "sourceId": "4b382253-b0e7-470b-9879-b5dfaa7db064",
+            "locator": "Sheet 4, 04_Interface, 1.3 INCH LCD, MB.J8 pin 4"
+          }
+        ],
+        "note": ""
+      },
+      "interfaces": {
+        "value": [
+          "Ground"
+        ],
+        "unit": null,
+        "status": "proposed",
+        "sources": [
+          {
+            "sourceId": "4b382253-b0e7-470b-9879-b5dfaa7db064",
+            "locator": "Sheet 4, MB.J8 pin 4"
+          }
+        ],
+        "note": "Existing main-to-display board interconnect; not an unused expansion header."
+      },
+      "reserved": {
+        "value": true,
+        "unit": null,
+        "status": "proposed",
+        "sources": [
+          {
+            "sourceId": "4b382253-b0e7-470b-9879-b5dfaa7db064",
+            "locator": "Sheet 4, MB.J8 interconnect"
+          }
+        ],
+        "note": "Reserve existing interconnect until electrical loading, boot strapping and downstream functions are reviewed."
+      },
+      "maxVoltageV": {
+        "value": null,
+        "unit": "V",
+        "status": "unknown",
+        "sources": [],
+        "note": "Absolute pin limit is not established by a nominal net label; review attached devices and power domain."
+      },
+      "maxCurrentMA": {
+        "value": null,
+        "unit": "mA",
+        "status": "unknown",
+        "sources": [],
+        "note": "No connector or board-level current budget verified."
+      }
+    },
+    {
+      "id": "08c5614f-3e00-496f-9626-d01f562cba3e",
+      "number": "MB.J8.5",
+      "name": {
+        "value": "IO3",
+        "unit": null,
+        "status": "proposed",
+        "sources": [
+          {
+            "sourceId": "4b382253-b0e7-470b-9879-b5dfaa7db064",
+            "locator": "Sheet 4, 04_Interface, 1.3 INCH LCD, MB.J8 pin 5"
+          }
+        ],
+        "note": ""
+      },
+      "interfaces": {
+        "value": [
+          "GPIO3",
+          "LED",
+          "Strapping"
+        ],
+        "unit": null,
+        "status": "proposed",
+        "sources": [
+          {
+            "sourceId": "4b382253-b0e7-470b-9879-b5dfaa7db064",
+            "locator": "Sheet 4, MB.J8 pin 5"
+          }
+        ],
+        "note": "Existing main-to-display board interconnect; not an unused expansion header."
+      },
+      "reserved": {
+        "value": true,
+        "unit": null,
+        "status": "proposed",
+        "sources": [
+          {
+            "sourceId": "4b382253-b0e7-470b-9879-b5dfaa7db064",
+            "locator": "Sheet 4, MB.J8 interconnect"
+          }
+        ],
+        "note": "Reserve existing interconnect until electrical loading, boot strapping and downstream functions are reviewed."
+      },
+      "maxVoltageV": {
+        "value": null,
+        "unit": "V",
+        "status": "unknown",
+        "sources": [],
+        "note": "Absolute pin limit is not established by a nominal net label; review attached devices and power domain."
+      },
+      "maxCurrentMA": {
+        "value": null,
+        "unit": "mA",
+        "status": "unknown",
+        "sources": [],
+        "note": "No connector or board-level current budget verified."
+      }
+    },
+    {
+      "id": "faf2f5ef-cdea-49f7-81f0-fa1a207db797",
+      "number": "MB.J8.6",
+      "name": {
+        "value": "DGND",
+        "unit": null,
+        "status": "proposed",
+        "sources": [
+          {
+            "sourceId": "4b382253-b0e7-470b-9879-b5dfaa7db064",
+            "locator": "Sheet 4, 04_Interface, 1.3 INCH LCD, MB.J8 pin 6"
+          }
+        ],
+        "note": ""
+      },
+      "interfaces": {
+        "value": [
+          "Ground"
+        ],
+        "unit": null,
+        "status": "proposed",
+        "sources": [
+          {
+            "sourceId": "4b382253-b0e7-470b-9879-b5dfaa7db064",
+            "locator": "Sheet 4, MB.J8 pin 6"
+          }
+        ],
+        "note": "Existing main-to-display board interconnect; not an unused expansion header."
+      },
+      "reserved": {
+        "value": true,
+        "unit": null,
+        "status": "proposed",
+        "sources": [
+          {
+            "sourceId": "4b382253-b0e7-470b-9879-b5dfaa7db064",
+            "locator": "Sheet 4, MB.J8 interconnect"
+          }
+        ],
+        "note": "Reserve existing interconnect until electrical loading, boot strapping and downstream functions are reviewed."
+      },
+      "maxVoltageV": {
+        "value": null,
+        "unit": "V",
+        "status": "unknown",
+        "sources": [],
+        "note": "Absolute pin limit is not established by a nominal net label; review attached devices and power domain."
+      },
+      "maxCurrentMA": {
+        "value": null,
+        "unit": "mA",
+        "status": "unknown",
+        "sources": [],
+        "note": "No connector or board-level current budget verified."
+      }
+    },
+    {
+      "id": "dcdb8069-8149-4a02-bf1c-6fb646d2d297",
+      "number": "MB.J8.7",
+      "name": {
+        "value": "IO45",
+        "unit": null,
+        "status": "proposed",
+        "sources": [
+          {
+            "sourceId": "4b382253-b0e7-470b-9879-b5dfaa7db064",
+            "locator": "Sheet 4, 04_Interface, 1.3 INCH LCD, MB.J8 pin 7"
+          }
+        ],
+        "note": ""
+      },
+      "interfaces": {
+        "value": [
+          "GPIO45",
+          "Strapping"
+        ],
+        "unit": null,
+        "status": "proposed",
+        "sources": [
+          {
+            "sourceId": "4b382253-b0e7-470b-9879-b5dfaa7db064",
+            "locator": "Sheet 4, MB.J8 pin 7"
+          }
+        ],
+        "note": "Existing main-to-display board interconnect; not an unused expansion header."
+      },
+      "reserved": {
+        "value": true,
+        "unit": null,
+        "status": "proposed",
+        "sources": [
+          {
+            "sourceId": "4b382253-b0e7-470b-9879-b5dfaa7db064",
+            "locator": "Sheet 4, MB.J8 interconnect"
+          }
+        ],
+        "note": "Reserve existing interconnect until electrical loading, boot strapping and downstream functions are reviewed."
+      },
+      "maxVoltageV": {
+        "value": null,
+        "unit": "V",
+        "status": "unknown",
+        "sources": [],
+        "note": "Absolute pin limit is not established by a nominal net label; review attached devices and power domain."
+      },
+      "maxCurrentMA": {
+        "value": null,
+        "unit": "mA",
+        "status": "unknown",
+        "sources": [],
+        "note": "No connector or board-level current budget verified."
+      }
+    },
+    {
+      "id": "4223c61e-2ddd-406a-8942-be1e26cbc42d",
+      "number": "MB.J8.8",
+      "name": {
+        "value": "DGND",
+        "unit": null,
+        "status": "proposed",
+        "sources": [
+          {
+            "sourceId": "4b382253-b0e7-470b-9879-b5dfaa7db064",
+            "locator": "Sheet 4, 04_Interface, 1.3 INCH LCD, MB.J8 pin 8"
+          }
+        ],
+        "note": ""
+      },
+      "interfaces": {
+        "value": [
+          "Ground"
+        ],
+        "unit": null,
+        "status": "proposed",
+        "sources": [
+          {
+            "sourceId": "4b382253-b0e7-470b-9879-b5dfaa7db064",
+            "locator": "Sheet 4, MB.J8 pin 8"
+          }
+        ],
+        "note": "Existing main-to-display board interconnect; not an unused expansion header."
+      },
+      "reserved": {
+        "value": true,
+        "unit": null,
+        "status": "proposed",
+        "sources": [
+          {
+            "sourceId": "4b382253-b0e7-470b-9879-b5dfaa7db064",
+            "locator": "Sheet 4, MB.J8 interconnect"
+          }
+        ],
+        "note": "Reserve existing interconnect until electrical loading, boot strapping and downstream functions are reviewed."
+      },
+      "maxVoltageV": {
+        "value": null,
+        "unit": "V",
+        "status": "unknown",
+        "sources": [],
+        "note": "Absolute pin limit is not established by a nominal net label; review attached devices and power domain."
+      },
+      "maxCurrentMA": {
+        "value": null,
+        "unit": "mA",
+        "status": "unknown",
+        "sources": [],
+        "note": "No connector or board-level current budget verified."
+      }
+    },
+    {
+      "id": "593eb5b2-d678-428f-a913-9543b10a9ce4",
+      "number": "MB.J8.9",
+      "name": {
+        "value": "IO46",
+        "unit": null,
+        "status": "proposed",
+        "sources": [
+          {
+            "sourceId": "4b382253-b0e7-470b-9879-b5dfaa7db064",
+            "locator": "Sheet 4, 04_Interface, 1.3 INCH LCD, MB.J8 pin 9"
+          }
+        ],
+        "note": ""
+      },
+      "interfaces": {
+        "value": [
+          "GPIO46",
+          "Strapping"
+        ],
+        "unit": null,
+        "status": "proposed",
+        "sources": [
+          {
+            "sourceId": "4b382253-b0e7-470b-9879-b5dfaa7db064",
+            "locator": "Sheet 4, MB.J8 pin 9"
+          }
+        ],
+        "note": "Existing main-to-display board interconnect; not an unused expansion header."
+      },
+      "reserved": {
+        "value": true,
+        "unit": null,
+        "status": "proposed",
+        "sources": [
+          {
+            "sourceId": "4b382253-b0e7-470b-9879-b5dfaa7db064",
+            "locator": "Sheet 4, MB.J8 interconnect"
+          }
+        ],
+        "note": "Reserve existing interconnect until electrical loading, boot strapping and downstream functions are reviewed."
+      },
+      "maxVoltageV": {
+        "value": null,
+        "unit": "V",
+        "status": "unknown",
+        "sources": [],
+        "note": "Absolute pin limit is not established by a nominal net label; review attached devices and power domain."
+      },
+      "maxCurrentMA": {
+        "value": null,
+        "unit": "mA",
+        "status": "unknown",
+        "sources": [],
+        "note": "No connector or board-level current budget verified."
+      }
+    },
+    {
+      "id": "f8aa4f81-9e65-470b-972f-28c86f9cb5f8",
+      "number": "MB.J8.10",
+      "name": {
+        "value": "DGND",
+        "unit": null,
+        "status": "proposed",
+        "sources": [
+          {
+            "sourceId": "4b382253-b0e7-470b-9879-b5dfaa7db064",
+            "locator": "Sheet 4, 04_Interface, 1.3 INCH LCD, MB.J8 pin 10"
+          }
+        ],
+        "note": ""
+      },
+      "interfaces": {
+        "value": [
+          "Ground"
+        ],
+        "unit": null,
+        "status": "proposed",
+        "sources": [
+          {
+            "sourceId": "4b382253-b0e7-470b-9879-b5dfaa7db064",
+            "locator": "Sheet 4, MB.J8 pin 10"
+          }
+        ],
+        "note": "Existing main-to-display board interconnect; not an unused expansion header."
+      },
+      "reserved": {
+        "value": true,
+        "unit": null,
+        "status": "proposed",
+        "sources": [
+          {
+            "sourceId": "4b382253-b0e7-470b-9879-b5dfaa7db064",
+            "locator": "Sheet 4, MB.J8 interconnect"
+          }
+        ],
+        "note": "Reserve existing interconnect until electrical loading, boot strapping and downstream functions are reviewed."
+      },
+      "maxVoltageV": {
+        "value": null,
+        "unit": "V",
+        "status": "unknown",
+        "sources": [],
+        "note": "Absolute pin limit is not established by a nominal net label; review attached devices and power domain."
+      },
+      "maxCurrentMA": {
+        "value": null,
+        "unit": "mA",
+        "status": "unknown",
+        "sources": [],
+        "note": "No connector or board-level current budget verified."
+      }
+    },
+    {
+      "id": "fb6ec60f-b5b5-4d15-92ed-668c2efeb173",
+      "number": "MB.J9.1",
+      "name": {
+        "value": "DGND",
+        "unit": null,
+        "status": "proposed",
+        "sources": [
+          {
+            "sourceId": "4b382253-b0e7-470b-9879-b5dfaa7db064",
+            "locator": "Sheet 4, 04_Interface, 1.3 INCH LCD, MB.J9 pin 1"
+          }
+        ],
+        "note": ""
+      },
+      "interfaces": {
+        "value": [
+          "Ground"
+        ],
+        "unit": null,
+        "status": "proposed",
+        "sources": [
+          {
+            "sourceId": "4b382253-b0e7-470b-9879-b5dfaa7db064",
+            "locator": "Sheet 4, MB.J9 pin 1"
+          }
+        ],
+        "note": "Existing main-to-display board interconnect; not an unused expansion header."
+      },
+      "reserved": {
+        "value": true,
+        "unit": null,
+        "status": "proposed",
+        "sources": [
+          {
+            "sourceId": "4b382253-b0e7-470b-9879-b5dfaa7db064",
+            "locator": "Sheet 4, MB.J9 interconnect"
+          }
+        ],
+        "note": "Reserve existing interconnect until electrical loading, boot strapping and downstream functions are reviewed."
+      },
+      "maxVoltageV": {
+        "value": null,
+        "unit": "V",
+        "status": "unknown",
+        "sources": [],
+        "note": "Absolute pin limit is not established by a nominal net label; review attached devices and power domain."
+      },
+      "maxCurrentMA": {
+        "value": null,
+        "unit": "mA",
+        "status": "unknown",
+        "sources": [],
+        "note": "No connector or board-level current budget verified."
+      }
+    },
+    {
+      "id": "f9cfd845-11fb-4a26-a8a4-4156d3840f86",
+      "number": "MB.J9.2",
+      "name": {
+        "value": "IO48",
+        "unit": null,
+        "status": "proposed",
+        "sources": [
+          {
+            "sourceId": "4b382253-b0e7-470b-9879-b5dfaa7db064",
+            "locator": "Sheet 4, 04_Interface, 1.3 INCH LCD, MB.J9 pin 2"
+          }
+        ],
+        "note": ""
+      },
+      "interfaces": {
+        "value": [
+          "GPIO48",
+          "LCD interconnect"
+        ],
+        "unit": null,
+        "status": "proposed",
+        "sources": [
+          {
+            "sourceId": "4b382253-b0e7-470b-9879-b5dfaa7db064",
+            "locator": "Sheet 4, MB.J9 pin 2"
+          }
+        ],
+        "note": "Existing main-to-display board interconnect; not an unused expansion header."
+      },
+      "reserved": {
+        "value": true,
+        "unit": null,
+        "status": "proposed",
+        "sources": [
+          {
+            "sourceId": "4b382253-b0e7-470b-9879-b5dfaa7db064",
+            "locator": "Sheet 4, MB.J9 interconnect"
+          }
+        ],
+        "note": "Reserve existing interconnect until electrical loading, boot strapping and downstream functions are reviewed."
+      },
+      "maxVoltageV": {
+        "value": null,
+        "unit": "V",
+        "status": "unknown",
+        "sources": [],
+        "note": "Absolute pin limit is not established by a nominal net label; review attached devices and power domain."
+      },
+      "maxCurrentMA": {
+        "value": null,
+        "unit": "mA",
+        "status": "unknown",
+        "sources": [],
+        "note": "No connector or board-level current budget verified."
+      }
+    },
+    {
+      "id": "390fdb56-30dc-41d2-8abd-762004abcd56",
+      "number": "MB.J9.3",
+      "name": {
+        "value": "DGND",
+        "unit": null,
+        "status": "proposed",
+        "sources": [
+          {
+            "sourceId": "4b382253-b0e7-470b-9879-b5dfaa7db064",
+            "locator": "Sheet 4, 04_Interface, 1.3 INCH LCD, MB.J9 pin 3"
+          }
+        ],
+        "note": ""
+      },
+      "interfaces": {
+        "value": [
+          "Ground"
+        ],
+        "unit": null,
+        "status": "proposed",
+        "sources": [
+          {
+            "sourceId": "4b382253-b0e7-470b-9879-b5dfaa7db064",
+            "locator": "Sheet 4, MB.J9 pin 3"
+          }
+        ],
+        "note": "Existing main-to-display board interconnect; not an unused expansion header."
+      },
+      "reserved": {
+        "value": true,
+        "unit": null,
+        "status": "proposed",
+        "sources": [
+          {
+            "sourceId": "4b382253-b0e7-470b-9879-b5dfaa7db064",
+            "locator": "Sheet 4, MB.J9 interconnect"
+          }
+        ],
+        "note": "Reserve existing interconnect until electrical loading, boot strapping and downstream functions are reviewed."
+      },
+      "maxVoltageV": {
+        "value": null,
+        "unit": "V",
+        "status": "unknown",
+        "sources": [],
+        "note": "Absolute pin limit is not established by a nominal net label; review attached devices and power domain."
+      },
+      "maxCurrentMA": {
+        "value": null,
+        "unit": "mA",
+        "status": "unknown",
+        "sources": [],
+        "note": "No connector or board-level current budget verified."
+      }
+    },
+    {
+      "id": "d05fab43-8050-4e1d-ac3a-d35de4dfa675",
+      "number": "MB.J9.4",
+      "name": {
+        "value": "IO47",
+        "unit": null,
+        "status": "proposed",
+        "sources": [
+          {
+            "sourceId": "4b382253-b0e7-470b-9879-b5dfaa7db064",
+            "locator": "Sheet 4, 04_Interface, 1.3 INCH LCD, MB.J9 pin 4"
+          }
+        ],
+        "note": ""
+      },
+      "interfaces": {
+        "value": [
+          "GPIO47",
+          "LCD interconnect"
+        ],
+        "unit": null,
+        "status": "proposed",
+        "sources": [
+          {
+            "sourceId": "4b382253-b0e7-470b-9879-b5dfaa7db064",
+            "locator": "Sheet 4, MB.J9 pin 4"
+          }
+        ],
+        "note": "Existing main-to-display board interconnect; not an unused expansion header."
+      },
+      "reserved": {
+        "value": true,
+        "unit": null,
+        "status": "proposed",
+        "sources": [
+          {
+            "sourceId": "4b382253-b0e7-470b-9879-b5dfaa7db064",
+            "locator": "Sheet 4, MB.J9 interconnect"
+          }
+        ],
+        "note": "Reserve existing interconnect until electrical loading, boot strapping and downstream functions are reviewed."
+      },
+      "maxVoltageV": {
+        "value": null,
+        "unit": "V",
+        "status": "unknown",
+        "sources": [],
+        "note": "Absolute pin limit is not established by a nominal net label; review attached devices and power domain."
+      },
+      "maxCurrentMA": {
+        "value": null,
+        "unit": "mA",
+        "status": "unknown",
+        "sources": [],
+        "note": "No connector or board-level current budget verified."
+      }
+    },
+    {
+      "id": "face4caa-06d2-40dc-abd0-5554127a1ea6",
+      "number": "MB.J9.5",
+      "name": {
+        "value": "DGND",
+        "unit": null,
+        "status": "proposed",
+        "sources": [
+          {
+            "sourceId": "4b382253-b0e7-470b-9879-b5dfaa7db064",
+            "locator": "Sheet 4, 04_Interface, 1.3 INCH LCD, MB.J9 pin 5"
+          }
+        ],
+        "note": ""
+      },
+      "interfaces": {
+        "value": [
+          "Ground"
+        ],
+        "unit": null,
+        "status": "proposed",
+        "sources": [
+          {
+            "sourceId": "4b382253-b0e7-470b-9879-b5dfaa7db064",
+            "locator": "Sheet 4, MB.J9 pin 5"
+          }
+        ],
+        "note": "Existing main-to-display board interconnect; not an unused expansion header."
+      },
+      "reserved": {
+        "value": true,
+        "unit": null,
+        "status": "proposed",
+        "sources": [
+          {
+            "sourceId": "4b382253-b0e7-470b-9879-b5dfaa7db064",
+            "locator": "Sheet 4, MB.J9 interconnect"
+          }
+        ],
+        "note": "Reserve existing interconnect until electrical loading, boot strapping and downstream functions are reviewed."
+      },
+      "maxVoltageV": {
+        "value": null,
+        "unit": "V",
+        "status": "unknown",
+        "sources": [],
+        "note": "Absolute pin limit is not established by a nominal net label; review attached devices and power domain."
+      },
+      "maxCurrentMA": {
+        "value": null,
+        "unit": "mA",
+        "status": "unknown",
+        "sources": [],
+        "note": "No connector or board-level current budget verified."
+      }
+    },
+    {
+      "id": "53c15211-d04d-476c-82e3-d1fd276062cb",
+      "number": "MB.J9.6",
+      "name": {
+        "value": "IO44",
+        "unit": null,
+        "status": "proposed",
+        "sources": [
+          {
+            "sourceId": "4b382253-b0e7-470b-9879-b5dfaa7db064",
+            "locator": "Sheet 4, 04_Interface, 1.3 INCH LCD, MB.J9 pin 6"
+          }
+        ],
+        "note": ""
+      },
+      "interfaces": {
+        "value": [
+          "GPIO44",
+          "LCD interconnect"
+        ],
+        "unit": null,
+        "status": "proposed",
+        "sources": [
+          {
+            "sourceId": "4b382253-b0e7-470b-9879-b5dfaa7db064",
+            "locator": "Sheet 4, MB.J9 pin 6"
+          }
+        ],
+        "note": "Existing main-to-display board interconnect; not an unused expansion header."
+      },
+      "reserved": {
+        "value": true,
+        "unit": null,
+        "status": "proposed",
+        "sources": [
+          {
+            "sourceId": "4b382253-b0e7-470b-9879-b5dfaa7db064",
+            "locator": "Sheet 4, MB.J9 interconnect"
+          }
+        ],
+        "note": "Reserve existing interconnect until electrical loading, boot strapping and downstream functions are reviewed."
+      },
+      "maxVoltageV": {
+        "value": null,
+        "unit": "V",
+        "status": "unknown",
+        "sources": [],
+        "note": "Absolute pin limit is not established by a nominal net label; review attached devices and power domain."
+      },
+      "maxCurrentMA": {
+        "value": null,
+        "unit": "mA",
+        "status": "unknown",
+        "sources": [],
+        "note": "No connector or board-level current budget verified."
+      }
+    },
+    {
+      "id": "e81d783d-042a-466f-b646-f8ebce96ccb3",
+      "number": "MB.J9.7",
+      "name": {
+        "value": "DGND",
+        "unit": null,
+        "status": "proposed",
+        "sources": [
+          {
+            "sourceId": "4b382253-b0e7-470b-9879-b5dfaa7db064",
+            "locator": "Sheet 4, 04_Interface, 1.3 INCH LCD, MB.J9 pin 7"
+          }
+        ],
+        "note": ""
+      },
+      "interfaces": {
+        "value": [
+          "Ground"
+        ],
+        "unit": null,
+        "status": "proposed",
+        "sources": [
+          {
+            "sourceId": "4b382253-b0e7-470b-9879-b5dfaa7db064",
+            "locator": "Sheet 4, MB.J9 pin 7"
+          }
+        ],
+        "note": "Existing main-to-display board interconnect; not an unused expansion header."
+      },
+      "reserved": {
+        "value": true,
+        "unit": null,
+        "status": "proposed",
+        "sources": [
+          {
+            "sourceId": "4b382253-b0e7-470b-9879-b5dfaa7db064",
+            "locator": "Sheet 4, MB.J9 interconnect"
+          }
+        ],
+        "note": "Reserve existing interconnect until electrical loading, boot strapping and downstream functions are reviewed."
+      },
+      "maxVoltageV": {
+        "value": null,
+        "unit": "V",
+        "status": "unknown",
+        "sources": [],
+        "note": "Absolute pin limit is not established by a nominal net label; review attached devices and power domain."
+      },
+      "maxCurrentMA": {
+        "value": null,
+        "unit": "mA",
+        "status": "unknown",
+        "sources": [],
+        "note": "No connector or board-level current budget verified."
+      }
+    },
+    {
+      "id": "a203cd38-d5aa-46b5-9759-7ffccd761ff6",
+      "number": "MB.J9.8",
+      "name": {
+        "value": "IO21",
+        "unit": null,
+        "status": "proposed",
+        "sources": [
+          {
+            "sourceId": "4b382253-b0e7-470b-9879-b5dfaa7db064",
+            "locator": "Sheet 4, 04_Interface, 1.3 INCH LCD, MB.J9 pin 8"
+          }
+        ],
+        "note": ""
+      },
+      "interfaces": {
+        "value": [
+          "GPIO21",
+          "LCD interconnect"
+        ],
+        "unit": null,
+        "status": "proposed",
+        "sources": [
+          {
+            "sourceId": "4b382253-b0e7-470b-9879-b5dfaa7db064",
+            "locator": "Sheet 4, MB.J9 pin 8"
+          }
+        ],
+        "note": "Existing main-to-display board interconnect; not an unused expansion header."
+      },
+      "reserved": {
+        "value": true,
+        "unit": null,
+        "status": "proposed",
+        "sources": [
+          {
+            "sourceId": "4b382253-b0e7-470b-9879-b5dfaa7db064",
+            "locator": "Sheet 4, MB.J9 interconnect"
+          }
+        ],
+        "note": "Reserve existing interconnect until electrical loading, boot strapping and downstream functions are reviewed."
+      },
+      "maxVoltageV": {
+        "value": null,
+        "unit": "V",
+        "status": "unknown",
+        "sources": [],
+        "note": "Absolute pin limit is not established by a nominal net label; review attached devices and power domain."
+      },
+      "maxCurrentMA": {
+        "value": null,
+        "unit": "mA",
+        "status": "unknown",
+        "sources": [],
+        "note": "No connector or board-level current budget verified."
+      }
+    },
+    {
+      "id": "3916c948-05f2-4be6-a0e1-6cb50dca313b",
+      "number": "MB.J9.9",
+      "name": {
+        "value": "DGND",
+        "unit": null,
+        "status": "proposed",
+        "sources": [
+          {
+            "sourceId": "4b382253-b0e7-470b-9879-b5dfaa7db064",
+            "locator": "Sheet 4, 04_Interface, 1.3 INCH LCD, MB.J9 pin 9"
+          }
+        ],
+        "note": ""
+      },
+      "interfaces": {
+        "value": [
+          "Ground"
+        ],
+        "unit": null,
+        "status": "proposed",
+        "sources": [
+          {
+            "sourceId": "4b382253-b0e7-470b-9879-b5dfaa7db064",
+            "locator": "Sheet 4, MB.J9 pin 9"
+          }
+        ],
+        "note": "Existing main-to-display board interconnect; not an unused expansion header."
+      },
+      "reserved": {
+        "value": true,
+        "unit": null,
+        "status": "proposed",
+        "sources": [
+          {
+            "sourceId": "4b382253-b0e7-470b-9879-b5dfaa7db064",
+            "locator": "Sheet 4, MB.J9 interconnect"
+          }
+        ],
+        "note": "Reserve existing interconnect until electrical loading, boot strapping and downstream functions are reviewed."
+      },
+      "maxVoltageV": {
+        "value": null,
+        "unit": "V",
+        "status": "unknown",
+        "sources": [],
+        "note": "Absolute pin limit is not established by a nominal net label; review attached devices and power domain."
+      },
+      "maxCurrentMA": {
+        "value": null,
+        "unit": "mA",
+        "status": "unknown",
+        "sources": [],
+        "note": "No connector or board-level current budget verified."
+      }
+    },
+    {
+      "id": "3231993b-8fc1-4e71-9f71-0c82e1608b8e",
+      "number": "MB.J9.10",
+      "name": {
+        "value": "IO43",
+        "unit": null,
+        "status": "proposed",
+        "sources": [
+          {
+            "sourceId": "4b382253-b0e7-470b-9879-b5dfaa7db064",
+            "locator": "Sheet 4, 04_Interface, 1.3 INCH LCD, MB.J9 pin 10"
+          }
+        ],
+        "note": ""
+      },
+      "interfaces": {
+        "value": [
+          "GPIO43",
+          "LCD interconnect"
+        ],
+        "unit": null,
+        "status": "proposed",
+        "sources": [
+          {
+            "sourceId": "4b382253-b0e7-470b-9879-b5dfaa7db064",
+            "locator": "Sheet 4, MB.J9 pin 10"
+          }
+        ],
+        "note": "Existing main-to-display board interconnect; not an unused expansion header."
+      },
+      "reserved": {
+        "value": true,
+        "unit": null,
+        "status": "proposed",
+        "sources": [
+          {
+            "sourceId": "4b382253-b0e7-470b-9879-b5dfaa7db064",
+            "locator": "Sheet 4, MB.J9 interconnect"
+          }
+        ],
+        "note": "Reserve existing interconnect until electrical loading, boot strapping and downstream functions are reviewed."
+      },
+      "maxVoltageV": {
+        "value": null,
+        "unit": "V",
+        "status": "unknown",
+        "sources": [],
+        "note": "Absolute pin limit is not established by a nominal net label; review attached devices and power domain."
+      },
+      "maxCurrentMA": {
+        "value": null,
+        "unit": "mA",
+        "status": "unknown",
+        "sources": [],
+        "note": "No connector or board-level current budget verified."
+      }
+    }
+  ],
+  "power": {
+    "minSupplyV": {
+      "value": null,
+      "unit": "V",
+      "status": "unknown",
+      "sources": [],
+      "note": "Micro-USB power path documented; permissible complete-board input range not qualified."
+    },
+    "maxSupplyV": {
+      "value": null,
+      "unit": "V",
+      "status": "unknown",
+      "sources": [],
+      "note": "Do not substitute module supply limits for the complete board."
+    },
+    "maxCurrentMA": {
+      "value": null,
+      "unit": "mA",
+      "status": "unknown",
+      "sources": [],
+      "note": "Board worst-case consumption and available accessory budget not qualified."
+    }
+  },
+  "dimensions": {
+    "widthMM": {
+      "value": null,
+      "unit": "mm",
+      "status": "unknown",
+      "sources": [],
+      "note": "Main-board front drawing gives 30.00 mm width; complete assembled board envelope remains unverified."
+    },
+    "heightMM": {
+      "value": null,
+      "unit": "mm",
+      "status": "unknown",
+      "sources": [],
+      "note": "Main-board front drawing gives 60.00 mm length; complete assembled board envelope remains unverified."
+    },
+    "depthMM": {
+      "value": null,
+      "unit": "mm",
+      "status": "unknown",
+      "sources": [],
+      "note": "Stack height, camera, connectors, LCD and tolerances have not been established."
+    }
+  },
+  "assets": [
+    {
+      "id": "7c6d5054-af39-4823-b599-eecac0de2934",
+      "kind": "drawing",
+      "name": "Main board front dimensions (30 x 60 mm board outline; not assembly envelope)",
+      "source": {
+        "sourceId": "5ba942b1-0821-4a28-bc29-6bfde8ae4436",
+        "locator": "Page 1, explicitly labeled 30.00 mm and 60.00 mm"
+      },
+      "sha256": "19d5563c571401bf40bdbdfd4d67f6d85dc7ac90789c65dd8eaeb745f682d8e5",
+      "license": null,
+      "reuseStatus": "unknown"
+    },
+    {
+      "id": "8b31dc4f-75ce-477c-bef5-fe10db79061f",
+      "kind": "drawing",
+      "name": "Sub-board schematic revision conflict: filename V1.1, title block 1.0",
+      "source": {
+        "sourceId": "3b71f7df-81dc-46a2-901b-120ac38c904e",
+        "locator": "Pages 1-2 title blocks versus URL filename"
+      },
+      "sha256": "dab440e2d801f5c7511a027370274dbe1cc8dd9006dd4aa9214c4b4bf73584cd",
+      "license": "Proprietary title block; reuse permission unresolved",
+      "reuseStatus": "review-required"
+    }
+  ],
+  "firmware": [
+    {
+      "id": "1e93a74f-dc6a-4183-b7ec-318615818680",
+      "sdk": {
+        "value": "ESP-IDF / ESP-WHO",
+        "unit": null,
+        "status": "proposed",
+        "sources": [
+          {
+            "sourceId": "7f12cc9b-2588-4fc8-9168-76a7b5f90121",
+            "locator": "Section 2.4 Software Setup"
+          }
+        ],
+        "note": ""
+      },
+      "version": {
+        "value": null,
+        "unit": null,
+        "status": "unknown",
+        "sources": [],
+        "note": "A compatible exact firmware/SDK release has not been selected or built."
+      },
+      "source": {
+        "sourceId": "7f12cc9b-2588-4fc8-9168-76a7b5f90121",
+        "locator": "Section 2.4 Software Setup"
+      }
+    }
+  ],
+  "sources": [
+    {
+      "id": "7f12cc9b-2588-4fc8-9168-76a7b5f90121",
+      "title": "Espressif ESP32-S3-EYE v2.2 guide",
+      "url": "https://docs.espressif.com/projects/esp-board-manager/en/latest/references/boards/esp32_s3_eye.html",
+      "version": "v2.2 guide; live page snapshot 2026-09-10",
+      "retrievedAt": "2026-09-10T19:32:54.506Z",
+      "sha256": "8121661ae057aff9a38ba7a5d57381fd7320722d9147bb7e2223f33158a6caf5",
+      "license": null
+    },
+    {
+      "id": "4b382253-b0e7-470b-9879-b5dfaa7db064",
+      "title": "ESP32-S3-EYE-MB v2.2 schematic",
+      "url": "https://dl.espressif.com/dl/schematics/SCH_ESP32-S3-EYE-MB_20211201_V2.2.pdf",
+      "version": "Rev 2.2; title block 2021-12-07",
+      "retrievedAt": "2026-09-10T19:32:55.508Z",
+      "sha256": "641383ee88582f4453e5a86cfbcf54d2922b9259ae2f1ca597056ce592ec81c5",
+      "license": "Title block: Proprietary; reuse permission unresolved"
+    },
+    {
+      "id": "5ba942b1-0821-4a28-bc29-6bfde8ae4436",
+      "title": "ESP32-S3-EYE-MB v2.2 front dimensions",
+      "url": "https://dl.espressif.com/dl/schematics/DXF_ESP32-S3-EYE_MB_top_V2.2_20211207.pdf",
+      "version": "v2.2; locator date 2021-12-07",
+      "retrievedAt": "2026-09-10T19:32:55.935Z",
+      "sha256": "19d5563c571401bf40bdbdfd4d67f6d85dc7ac90789c65dd8eaeb745f682d8e5",
+      "license": null
+    },
+    {
+      "id": "3b71f7df-81dc-46a2-901b-120ac38c904e",
+      "title": "ESP32-S3-EYE-SUB schematic (revision conflict)",
+      "url": "https://dl.espressif.com/dl/schematics/SCH_ESP32-S3-EYE_SUB_V1.1_20210913.pdf",
+      "version": "CONFLICT: filename V1.1; title block Rev 1.0",
+      "retrievedAt": "2026-09-10T19:32:56.176Z",
+      "sha256": "dab440e2d801f5c7511a027370274dbe1cc8dd9006dd4aa9214c4b4bf73584cd",
+      "license": "Title block: Proprietary; reuse permission unresolved"
+    },
+    {
+      "id": "3f750c56-555c-4e86-a35b-95fd3d025353",
+      "title": "DigiKey ESP32-S3-EYE listing",
+      "url": "https://www.digikey.com/en/products/detail/espressif-systems/ESP32-S3-EYE/17887518",
+      "version": null,
+      "retrievedAt": null,
+      "sha256": null,
+      "license": null
+    }
+  ],
+  "notes": "Real user-selected pilot: Espressif ESP32-S3-EYE v2.2. Review proposal only. Main board and LCD sub-board form the assembly. Main-board schematic title is Rev 2.2, 2021-12-07. Sub-board source filename V1.1 conflicts with the Rev 1.0 title blocks and has not been resolved. Nearly all module GPIOs already serve onboard functions; do not treat the board as a generic free-GPIO module. Main-board J8/J9 pin numbers refer to the main-board schematic, not the sub-board connector reference numbers. The 20 recorded contacts are only a partial inventory. Nominal rail labels are not absolute electrical limits. Drawing width 30.00 mm and length 60.00 mm apply to the main-board outline, not a qualified assembled enclosure envelope. Public document retrieval does not grant redistribution, asset reuse, electrical approval or firmware execution. DigiKey direct retrieval was unavailable; no live quote or guaranteed stocked hardware revision is claimed."
+}

@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
 import {Camera, Sparkles, Download, RefreshCw} from 'lucide-react';
 import './renders.css';
+import {modelCoverage} from '../shared/model-coverage.mjs';
 
 export function RenderPane({state,run,boardColor}) {
   const [camera,setCamera]=useState('perspective'),[quality,setQuality]=useState('basic');
@@ -9,7 +10,7 @@ export function RenderPane({state,run,boardColor}) {
   const jobs=(state.renders||[]).filter(j=>j.board===state.board);
   const job=jobs.find(j=>j.id===chosen)||jobs[0];
   const running=working||jobs.some(j=>['queued','running'].includes(j.status));
-  const missing=job?.models?.components?.filter(c=>!c.models.some(m=>m.exists&&m.visible));
+  const coverage=modelCoverage(job?.models);
   const aiBusy=job?.ai?.status==='running';
   async function render(){setWorking(true);try{const result=await run('renders',{camera,quality,color:boardColor});if(result)setChosen(result.id)}finally{setWorking(false)}}
   return <div className="render-pane">
@@ -28,7 +29,7 @@ export function RenderPane({state,run,boardColor}) {
         {job?.ai?.status==='completed'&&<footer><span>Codex image generation</span><a href={`/api/renders/${job.id}/ai.png?v=2-${encodeURIComponent(job.ai.completedAt)}`} download={`illustrative-${job.id}.png`}><Download size={13}/>PNG</a></footer>}
       </article>
     </div>
-    {job&&<div className="render-evidence"><span className="eyebrow">MODEL COVERAGE</span>{missing?<p>{job.models.components.length-missing.length} of {job.models.components.length} footprints have a visible model file available.{missing.length>0&&<> Missing or hidden: <strong>{missing.map(c=>c.reference).join(', ')}</strong>. These parts are not represented in 3D; AI is instructed not to invent them.</>}</p>:<p>{job.models?.error||'Coverage is checked during rendering.'}</p>}<p className="source">{job.models?.source} · File saved {new Date(job.source.fileModifiedAt).toLocaleString()} · SHA-256 {job.source.sha256.slice(0,12)}<br/>Historical snapshot; render again after saving changes. Available files are not a dimensional validation.</p></div>}
+    {job&&<div className="render-evidence"><span className="eyebrow">MODEL COVERAGE</span>{coverage?<><p>{coverage.available.length} of {coverage.populated.length} populated footprints have at least one visible model file available.{coverage.missing.length>0&&<> No visible model file: <strong>{coverage.missing.map(c=>c.reference).join(', ')}</strong>.</>}{coverage.partial.length>0&&<> Additional visible model files are missing for <strong>{coverage.partial.map(c=>c.reference).join(', ')}</strong>; their geometry may be incomplete.</>}</p>{coverage.omitted.length>0&&<p>Do not populate — omitted from the render: <strong>{coverage.omitted.map(c=>c.reference).join(', ')}</strong>.</p>}</>:<p>{job.models?.error||(job.status==='completed'?'This older snapshot does not record population flags. Render again to check coverage.':'Coverage is checked during rendering.')}</p>}<p className="source">{job.models?.source} · File saved {new Date(job.source.fileModifiedAt).toLocaleString()} · SHA-256 {job.source.sha256.slice(0,12)}<br/>Historical snapshot; render again after saving changes. Available files are not a dimensional validation.</p></div>}
     <div className="studio-controls"><label>Studio direction<textarea value={style} maxLength={1200} onChange={e=>setStyle(e.target.value)} rows={2}/></label><button className="small-primary" disabled={!state.agent.imageGeneration||!state.agent.signedIn||state.agent.busy||working||job?.status!=='completed'||aiBusy} onClick={async()=>{setWorking(true);try{await run(`renders/${job.id}/studio`,{style})}finally{setWorking(false)}}}><Sparkles size={15}/>{aiBusy?'Generating…':'Generate AI studio image'}</button><p className="source">{!state.agent.imageGeneration?'Image generation requires a connected Codex runtime with image support.':'Uses your Codex login and included usage. Sends this rendered image and its model-coverage report to OpenAI.'} AI can alter geometry or labels: use only the actual PCB and engineering checks for design decisions.</p></div>
   </div>;
 }

@@ -1,0 +1,20 @@
+--- a/crates/konnect-core/src/tools/experimental_models.rs
++++ b/crates/konnect-core/src/tools/experimental_models.rs
+@@ -218,11 +218,15 @@
+                 let input: Request = serde_json::from_value(args)?;
+                 let client = client(address, input.native_instance)?;
+                 let result = client.diagnostic(client.document(std::path::Path::new(&input.board))?)?;
+-                let inputs: Value = serde_json::from_str(&result.inputs_json)?;
++                let mut inputs: Value = serde_json::from_str(&result.inputs_json)?;
+                 ensure!(inputs.is_object() && inputs["capture_version"] == 1, "Unsupported diagnostic inputs");
+                 ensure!(inputs["filename"] == std::fs::canonicalize(&input.board)?.to_string_lossy().as_ref(), "Diagnostic document mismatch");
++                // Newer diagnostic hosts report the editor's own unsaved flag.
++                // Keep it outside revision inputs; old hosts remain explicitly unknown.
++                let dirty = inputs.as_object_mut().and_then(|v| v.remove("editor_dirty"));
++                ensure!(dirty.as_ref().is_none_or(Value::is_boolean), "Invalid editor dirty observation");
+                 Ok(json!({"experimental":true,"native_instance":client.instance(),"revision":result.revision,
+-                    "inputs":inputs,"source":"ipc","approval_granted":false}))
++                    "dirty":dirty,"inputs":inputs,"source":"ipc","approval_granted":false}))
+             }
+             Mode::Context => {
+                 let input: ContextRequest = serde_json::from_value(args)?;

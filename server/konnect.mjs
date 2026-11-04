@@ -11,10 +11,10 @@ export function unpack(result) {
 }
 
 export class Konnect {
-  constructor() { this.queue = Promise.resolve(); }
+  constructor({configPath=null}={}) { this.queue = Promise.resolve();this.configPath=configPath; }
   async connect() {
     this.client = new Client({ name: 'kicad-companion-observer', version: '0.1.0' });
-    this.transport = new StdioClientTransport({ command: config.konnect,
+    this.transport = new StdioClientTransport({ command: config.konnect,args:this.configPath?['--config',this.configPath]:[],
       env: Object.fromEntries(Object.entries(process.env).filter(([, v]) => v !== undefined)), stderr: 'pipe' });
     this.transport.stderr?.on('data', () => {});
     await this.client.connect(this.transport);

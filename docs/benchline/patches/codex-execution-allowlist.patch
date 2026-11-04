@@ -1,0 +1,540 @@
+diff --git a/codex-rs/app-server/README.md b/codex-rs/app-server/README.md
+index a0aa92b..728e1cd 100644
+--- a/codex-rs/app-server/README.md
++++ b/codex-rs/app-server/README.md
+@@ -2065,6 +2065,29 @@ If the session approval policy uses `Granular` with `request_permissions: false`
+ 
+ ### Dynamic tool calls (experimental)
+ 
++#### Local execution allowlist (Benchline candidate patch)
++
++The Benchline candidate adds `features.tool_registry.execution_allowlist`, an
++exact namespace-to-tool-name map. Omission preserves the upstream default; an
++empty map denies every model tool. Plain function names use `functions`.
++For example, a client that supplies three mediated dynamic tools can use:
++
++```toml
++[features.tool_registry.execution_allowlist]
++functions = ["exec", "wait", "benchline_prepare_action", "benchline_action_status", "benchline_execute_action"]
++```
++
++The registry omits other tools from direct and Code Mode definitions and rejects
++their dispatch before hooks or handlers, including forged direct and nested
++calls. Code Mode's `exec` and `wait` also need explicit admission. Provider-hosted
++tools are disabled whenever this restriction is present because they do not
++execute through the local dispatcher. It does not grant permission, constrain
++explicit client-originated app-server RPCs, or replace the client's action gate,
++process isolation, configuration ownership, approval checks or output handling.
++The host must pin and validate this configuration; do not expose configuration
++overrides or arbitrary app-server RPCs to the model. This local patch is not an
++upstream-supported configuration option.
++
+ `dynamicTools` on `thread/start` and the corresponding `item/tool/call` request/response flow are experimental APIs. To enable them, set `initialize.params.capabilities.experimentalApi = true`.
+ 
+ Each entry in `dynamicTools` is either a top-level function or a namespace containing function tools. Dynamic tool identifiers follow the same constraints as Responses tools:
+diff --git a/codex-rs/core/config.schema.json b/codex-rs/core/config.schema.json
+index 24d7988..9a1ce8a 100644
+--- a/codex-rs/core/config.schema.json
++++ b/codex-rs/core/config.schema.json
+@@ -3711,6 +3711,16 @@
+           "description": "Fail the turn when multiple tools share the same effective name.",
+           "type": "boolean"
+         },
++        "execution_allowlist": {
++          "additionalProperties": {
++            "items": {
++              "type": "string"
++            },
++            "type": "array"
++          },
++          "description": "Exact namespace-to-name execution allowlist. Omitted means unrestricted; an empty map denies all tools. Hosted provider tools are disabled when set.",
++          "type": "object"
++        },
+         "turn_metadata_includes_tool_info": {
+           "description": "Include authoritative tool information in per-turn request metadata.",
+           "type": "boolean"
+diff --git a/codex-rs/core/src/config/mod.rs b/codex-rs/core/src/config/mod.rs
+index dca329a..104ea79 100644
+--- a/codex-rs/core/src/config/mod.rs
++++ b/codex-rs/core/src/config/mod.rs
+@@ -1093,6 +1093,8 @@ pub struct Config {
+ 
+ #[derive(Debug, Clone, Default, PartialEq, Eq, Serialize)]
+ pub struct ToolRegistryConfig {
++    /// Exact namespace/name execution boundary; None preserves default behavior.
++    pub execution_allowlist: Option<BTreeMap<String, Vec<String>>>,
+     /// Fail the turn when multiple tools share the same effective name.
+     pub error_on_tool_collisions: bool,
+     /// Include authoritative tool information in per-turn request metadata.
+@@ -3678,6 +3680,11 @@ impl Config {
+             resolve_experimental_request_user_input_enabled(&cfg);
+         let update_plan_enabled = resolve_update_plan_enabled(&cfg);
+         let tool_registry = ToolRegistryConfig {
++            execution_allowlist: cfg
++                .features
++                .as_ref()
++                .and_then(|features| features.tool_registry.as_ref())
++                .and_then(|config| config.execution_allowlist.clone()),
+             error_on_tool_collisions: cfg
+                 .features
+                 .as_ref()
+diff --git a/codex-rs/core/src/tools/mod.rs b/codex-rs/core/src/tools/mod.rs
+index ff1b6d0..0b770e2 100644
+--- a/codex-rs/core/src/tools/mod.rs
++++ b/codex-rs/core/src/tools/mod.rs
+@@ -4,6 +4,7 @@ pub(crate) mod context;
+ mod control_tool_analytics;
+ pub(crate) mod events;
+ mod executed_tool_calls;
++mod execution_allowlist;
+ pub(crate) mod handlers;
+ pub(crate) mod hook_names;
+ pub(crate) mod hosted_spec;
+diff --git a/codex-rs/core/src/tools/registry.rs b/codex-rs/core/src/tools/registry.rs
+index e73711f..c7cfbb3 100644
+--- a/codex-rs/core/src/tools/registry.rs
++++ b/codex-rs/core/src/tools/registry.rs
+@@ -497,6 +497,21 @@ impl ToolRegistry {
+         mut invocation: ToolInvocation,
+         terminal_outcome_reached: Option<Arc<AtomicBool>>,
+     ) -> Result<AnyToolResult, FunctionCallError> {
++        // Enforce before hooks, handler lookup or any model-requested action.
++        // Presentation hiding alone does not stop forged direct calls.
++        if !codex_tools::tool_execution_allowed(
++            invocation
++                .turn
++                .config
++                .tool_registry
++                .execution_allowlist
++                .as_ref(),
++            &invocation.tool_name,
++        ) {
++            return Err(FunctionCallError::RespondToModel(
++                "tool execution blocked by the configured execution allowlist".to_string(),
++            ));
++        }
+         let tool_name = invocation.tool_name.clone();
+         let call_id_owned = invocation.call_id.clone();
+         let otel = invocation.turn.session_telemetry.clone();
+diff --git a/codex-rs/core/src/tools/registry_tests.rs b/codex-rs/core/src/tools/registry_tests.rs
+index 9808432..dacb28a 100644
+--- a/codex-rs/core/src/tools/registry_tests.rs
++++ b/codex-rs/core/src/tools/registry_tests.rs
+@@ -779,6 +779,57 @@ async fn dispatch_uses_canonical_tool_names_for_lifecycle_contributors() -> anyh
+     Ok(())
+ }
+ 
++#[tokio::test]
++async fn execution_allowlist_denies_retained_handlers_before_lifecycle_for_both_sources()
++-> anyhow::Result<()> {
++    let (mut session, mut turn) = crate::session::tests::make_session_and_context().await;
++    Arc::make_mut(&mut turn.config)
++        .tool_registry
++        .execution_allowlist = Some(BTreeMap::new());
++    let records = Arc::new(std::sync::Mutex::new(Vec::new()));
++    let mut builder = codex_extension_api::ExtensionRegistryBuilder::<crate::config::Config>::new();
++    builder.tool_lifecycle_contributor(Arc::new(ToolLifecycleRecorder {
++        records: Arc::clone(&records),
++    }));
++    session.services.extensions = Arc::new(builder.build());
++    let tool_name = codex_tools::ToolName::plain("must_not_execute");
++    // Deliberately leave the denied handler registered, bypassing spec pruning.
++    let registry = ToolRegistry::from_tools([Arc::new(LifecycleTestHandler {
++        tool_name: tool_name.clone(),
++        result: LifecycleTestResult::Ok { success: true },
++    }) as Arc<dyn CoreToolRuntime>]);
++    let session = Arc::new(session);
++    let turn = Arc::new(turn);
++    for source in [
++        crate::tools::context::ToolCallSource::Direct,
++        crate::tools::context::ToolCallSource::CodeMode {
++            cell_id: "cell".to_string(),
++            runtime_tool_call_id: "nested".to_string(),
++        },
++    ] {
++        let mut invocation = test_invocation(
++            Arc::clone(&session),
++            Arc::clone(&turn),
++            "denied-call",
++            tool_name.clone(),
++        );
++        invocation.source = source;
++        let error = match registry
++            .dispatch_any_with_terminal_outcome(invocation, /*terminal_outcome_reached*/ None)
++            .await
++        {
++            Ok(_) => panic!("retained forbidden handler executed"),
++            Err(error) => error,
++        };
++        assert_eq!(
++            error.to_string(),
++            "tool execution blocked by the configured execution allowlist"
++        );
++    }
++    assert_eq!(*records.lock().expect("lifecycle records"), Vec::new());
++    Ok(())
++}
++
+ fn test_invocation(
+     session: Arc<crate::session::session::Session>,
+     turn: Arc<crate::session::turn_context::TurnContext>,
+diff --git a/codex-rs/core/src/tools/spec_plan.rs b/codex-rs/core/src/tools/spec_plan.rs
+index 908bb14..33486eb 100644
+--- a/codex-rs/core/src/tools/spec_plan.rs
++++ b/codex-rs/core/src/tools/spec_plan.rs
+@@ -356,6 +356,22 @@ pub(crate) fn finalize_tool_router(
+     tool_search_handler_cache: &ToolSearchHandlerCache,
+ ) -> CodexResult<ToolRouter> {
+     apply_direct_model_only_namespace_overrides(turn_context, &mut registry);
++    // Remove authority before generating nested tool definitions, not just from
++    // model-visible schemas. Hosted provider tools cannot use this dispatcher.
++    super::execution_allowlist::restrict_registry(
++        &turn_context.config.tool_registry,
++        &mut registry,
++    );
++    let hosted_specs = if turn_context
++        .config
++        .tool_registry
++        .execution_allowlist
++        .is_some()
++    {
++        Vec::new()
++    } else {
++        hosted_specs
++    };
+     let tool_mode = effective_tool_mode(turn_context, model_info);
+     let code_mode_enabled = matches!(tool_mode, ToolMode::CodeMode | ToolMode::CodeModeOnly);
+     if code_mode_enabled {
+@@ -405,8 +421,19 @@ pub(crate) fn finalize_tool_router(
+         append_tool_search_executor(turn_context, &mut registry, tool_search_handler_cache);
+     }
+ 
++    // Search registration can add a handler after the first pruning pass.
++    super::execution_allowlist::restrict_registry(
++        &turn_context.config.tool_registry,
++        &mut registry,
++    );
+     let code_mode_tool_names =
+         register_code_mode_executors(turn_context, model_info, &mut registry);
++    // Code Mode adds exec/wait after nested registration. They also require
++    // explicit admission; an empty allowlist must remain empty.
++    super::execution_allowlist::restrict_registry(
++        &turn_context.config.tool_registry,
++        &mut registry,
++    );
+     let include_tool_namespaces_info = turn_context
+         .config
+         .tool_registry
+diff --git a/codex-rs/core/tests/suite/mod.rs b/codex-rs/core/tests/suite/mod.rs
+index 8d43ca0..ceebb66 100644
+--- a/codex-rs/core/tests/suite/mod.rs
++++ b/codex-rs/core/tests/suite/mod.rs
+@@ -66,6 +66,7 @@ mod daybreak_access;
+ mod deprecation_notice;
+ mod exec;
+ mod exec_policy;
++mod execution_allowlist;
+ #[cfg(not(target_os = "windows"))]
+ mod extension_sandbox;
+ mod external_auth;
+diff --git a/codex-rs/features/src/feature_configs.rs b/codex-rs/features/src/feature_configs.rs
+index 32d3cba..94488ac 100644
+--- a/codex-rs/features/src/feature_configs.rs
++++ b/codex-rs/features/src/feature_configs.rs
+@@ -9,6 +9,10 @@ use std::collections::BTreeMap;
+ #[derive(Serialize, Deserialize, Debug, Clone, Default, PartialEq, Eq, JsonSchema)]
+ #[serde(deny_unknown_fields)]
+ pub struct ToolRegistryConfigToml {
++    /// Exact namespace-to-name execution allowlist. Omitted means unrestricted;
++    /// an empty map denies all tools. Hosted provider tools are disabled when set.
++    #[serde(skip_serializing_if = "Option::is_none")]
++    pub execution_allowlist: Option<BTreeMap<String, Vec<String>>>,
+     /// Fail the turn when multiple tools share the same effective name.
+     #[serde(skip_serializing_if = "Option::is_none")]
+     pub error_on_tool_collisions: Option<bool>,
+diff --git a/codex-rs/features/src/tests.rs b/codex-rs/features/src/tests.rs
+index 5ad5132..bf27e90 100644
+--- a/codex-rs/features/src/tests.rs
++++ b/codex-rs/features/src/tests.rs
+@@ -51,6 +51,7 @@ fn tool_registry_config_is_not_a_feature_toggle() {
+     assert_eq!(
+         features.tool_registry,
+         Some(crate::ToolRegistryConfigToml {
++            execution_allowlist: None,
+             error_on_tool_collisions: Some(true),
+             turn_metadata_includes_tool_info: Some(true),
+         })
+@@ -60,6 +61,36 @@ fn tool_registry_config_is_not_a_feature_toggle() {
+     assert_eq!(feature_for_key("tool_registry"), None);
+ }
+ 
++#[test]
++fn execution_allowlist_distinguishes_omission_empty_and_exact_namespaces() {
++    let empty: FeaturesToml = toml::from_str("[tool_registry.execution_allowlist]\n")
++        .expect("empty allowlist should deserialize");
++    assert_eq!(
++        empty
++            .tool_registry
++            .expect("registry config")
++            .execution_allowlist,
++        Some(BTreeMap::new())
++    );
++    let exact: FeaturesToml = toml::from_str(
++        "[tool_registry.execution_allowlist]\nfunctions = [\"exec\", \"wait\"]\nclock = [\"curr_time\"]\n",
++    )
++    .expect("exact allowlist should deserialize");
++    assert_eq!(
++        exact
++            .tool_registry
++            .expect("registry config")
++            .execution_allowlist,
++        Some(BTreeMap::from([
++            (
++                "functions".to_string(),
++                vec!["exec".to_string(), "wait".to_string()]
++            ),
++            ("clock".to_string(), vec!["curr_time".to_string()]),
++        ]))
++    );
++}
++
+ #[test]
+ fn executor_capability_discovery_is_an_opt_in_map_feature() {
+     let mut features = Features::with_defaults();
+diff --git a/codex-rs/tools/src/lib.rs b/codex-rs/tools/src/lib.rs
+index db84442..b006081 100644
+--- a/codex-rs/tools/src/lib.rs
++++ b/codex-rs/tools/src/lib.rs
+@@ -3,6 +3,7 @@
+ 
+ mod code_mode;
+ mod dynamic_tool;
++mod execution_allowlist;
+ mod function_call_error;
+ mod image_detail;
+ mod json_schema;
+@@ -27,6 +28,7 @@ pub use code_mode::collect_code_mode_tool_definitions;
+ pub use code_mode::tool_spec_to_code_mode_tool_definition;
+ pub use codex_protocol::ToolName;
+ pub use dynamic_tool::parse_dynamic_tool;
++pub use execution_allowlist::tool_execution_allowed;
+ pub use function_call_error::FunctionCallError;
+ pub use image_detail::can_request_original_image_detail;
+ pub use image_detail::normalize_output_image_detail;
+diff --git a/codex-rs/tools/src/execution_allowlist.rs b/codex-rs/tools/src/execution_allowlist.rs
+new file mode 100644
+index 0000000..ee19167
+--- /dev/null
++++ b/codex-rs/tools/src/execution_allowlist.rs
+@@ -0,0 +1,25 @@
++use std::collections::BTreeMap;
++
++use codex_protocol::ToolName;
++
++/// Tests an exact execution allowlist, independently of model-visible exposure.
++/// Missing configuration preserves upstream behavior; an empty map denies all.
++/// Plain names use the canonical functions namespace. No wildcards or flattened
++/// aliases are interpreted, so permission cannot cross namespace boundaries.
++pub fn tool_execution_allowed(
++    allowlist: Option<&BTreeMap<String, Vec<String>>>,
++    tool: &ToolName,
++) -> bool {
++    let Some(allowlist) = allowlist else {
++        return true;
++    };
++    let tool = tool.clone().with_default_namespace();
++    tool.namespace
++        .as_ref()
++        .and_then(|namespace| allowlist.get(namespace))
++        .is_some_and(|names| names.contains(&tool.name))
++}
++
++#[cfg(test)]
++#[path = "execution_allowlist_tests.rs"]
++mod tests;
+diff --git a/codex-rs/tools/src/execution_allowlist_tests.rs b/codex-rs/tools/src/execution_allowlist_tests.rs
+new file mode 100644
+index 0000000..cf81e5a
+--- /dev/null
++++ b/codex-rs/tools/src/execution_allowlist_tests.rs
+@@ -0,0 +1,33 @@
++use super::tool_execution_allowed;
++use codex_protocol::ToolName;
++use pretty_assertions::assert_eq;
++use std::collections::BTreeMap;
++
++#[test]
++fn exact_allowlist_preserves_namespace_identity_and_denies_omitted_names() {
++    let allowlist = BTreeMap::from([
++        ("functions".to_string(), vec!["read".to_string()]),
++        ("clock".to_string(), vec!["curr_time".to_string()]),
++    ]);
++    let cases = [
++        (ToolName::plain("read"), true),
++        (ToolName::namespaced("functions", "read"), true),
++        (ToolName::namespaced("", "read"), true),
++        (ToolName::namespaced("clock", "curr_time"), true),
++        (ToolName::namespaced("clock", "read"), false),
++        (ToolName::plain("clock__curr_time"), false),
++        (ToolName::plain("exec_command"), false),
++        (ToolName::plain("*"), false),
++    ];
++    for (tool, expected) in cases {
++        assert_eq!(tool_execution_allowed(Some(&allowlist), &tool), expected);
++    }
++    assert_eq!(
++        tool_execution_allowed(/*allowlist*/ None, &ToolName::plain("read")),
++        true
++    );
++    assert_eq!(
++        tool_execution_allowed(Some(&BTreeMap::new()), &ToolName::plain("read")),
++        false
++    );
++}
+diff --git a/codex-rs/core/src/tools/execution_allowlist.rs b/codex-rs/core/src/tools/execution_allowlist.rs
+new file mode 100644
+index 0000000..30e5f4b
+--- /dev/null
++++ b/codex-rs/core/src/tools/execution_allowlist.rs
+@@ -0,0 +1,16 @@
++use crate::config::ToolRegistryConfig;
++use crate::tools::registry::ToolRegistry;
++
++pub(super) fn restrict_registry(config: &ToolRegistryConfig, registry: &mut ToolRegistry) {
++    let Some(allowlist) = config.execution_allowlist.as_ref() else {
++        return;
++    };
++    let rejected = registry
++        .entries()
++        .map(|tool| tool.runtime.tool_name())
++        .filter(|name| !codex_tools::tool_execution_allowed(Some(allowlist), name))
++        .collect::<Vec<_>>();
++    for name in rejected {
++        registry.remove(&name);
++    }
++}
+diff --git a/codex-rs/core/tests/suite/execution_allowlist.rs b/codex-rs/core/tests/suite/execution_allowlist.rs
+new file mode 100644
+index 0000000..0e16250
+--- /dev/null
++++ b/codex-rs/core/tests/suite/execution_allowlist.rs
+@@ -0,0 +1,119 @@
++use std::collections::BTreeMap;
++
++use anyhow::Result;
++use codex_features::Feature;
++use codex_protocol::config_types::WebSearchMode;
++use core_test_support::responses;
++use core_test_support::responses::ev_completed;
++use core_test_support::responses::ev_function_call_with_namespace;
++use core_test_support::responses::ev_response_created;
++use core_test_support::responses::sse;
++use core_test_support::test_codex::test_codex;
++use pretty_assertions::assert_eq;
++use serde_json::json;
++use test_case::test_case;
++
++// The synthetic model intentionally emits a call even when its schema is absent.
++// This exercises the actual model-to-dispatch path, not just a policy predicate.
++#[test_case("clock", "curr_time", true; "admitted_exact_namespace")]
++#[test_case("clock", "curr_time", false; "registered_but_denied")]
++#[test_case("functions", "exec_command", false; "forged_direct_shell")]
++#[test_case("functions", "apply_patch", false; "forged_direct_file_edit")]
++#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
++async fn execution_allowlist_controls_forged_direct_calls(
++    namespace: &str,
++    name: &str,
++    allowed: bool,
++) -> Result<()> {
++    let server = responses::start_mock_server().await;
++    let responses = responses::mount_sse_sequence(
++        &server,
++        vec![
++            sse(vec![
++                ev_response_created("resp-1"),
++                ev_function_call_with_namespace("call-1", namespace, name, "{}"),
++                ev_completed("resp-1"),
++            ]),
++            sse(vec![ev_response_created("resp-2"), ev_completed("resp-2")]),
++        ],
++    )
++    .await;
++    let test = test_codex()
++        .with_config(move |config| {
++            config
++                .features
++                .enable(Feature::CurrentTimeReminder)
++                .expect("clock registration should be available");
++            config.tool_registry.execution_allowlist = Some(if allowed {
++                BTreeMap::from([("clock".to_string(), vec!["curr_time".to_string()])])
++            } else {
++                BTreeMap::new()
++            });
++        })
++        .build_with_auto_env(&server)
++        .await?;
++    test.submit_turn("Exercise only the test tool call").await?;
++    let requests = responses.requests();
++    assert_eq!(requests.len(), 2);
++    assert_eq!(
++        requests[0].tool_by_name("clock", "curr_time").is_some(),
++        allowed
++    );
++    let output = requests[1]
++        .function_call_output_text("call-1")
++        .expect("every forged call must receive a result");
++    if allowed {
++        assert!(output.contains("UTC"), "clock should execute: {output}");
++    } else {
++        assert_eq!(
++            output,
++            "tool execution blocked by the configured execution allowlist"
++        );
++    }
++    Ok(())
++}
++
++// Late-added Code Mode controls and provider-hosted search must not restore
++// authority after the initial registry has been pruned.
++#[test_case("exec"; "forged_code_mode_exec")]
++#[test_case("wait"; "forged_code_mode_wait")]
++#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
++async fn execution_allowlist_empty_removes_code_mode_and_hosted_tools(name: &str) -> Result<()> {
++    let server = responses::start_mock_server().await;
++    let responses = responses::mount_sse_sequence(
++        &server,
++        vec![
++            sse(vec![
++                ev_response_created("resp-1"),
++                ev_function_call_with_namespace("call-1", "functions", name, "{}"),
++                ev_completed("resp-1"),
++            ]),
++            sse(vec![ev_response_created("resp-2"), ev_completed("resp-2")]),
++        ],
++    )
++    .await;
++    let test = test_codex()
++        .with_config(|config| {
++            config
++                .features
++                .enable(Feature::CodeModeOnly)
++                .expect("Code Mode available");
++            config
++                .web_search_mode
++                .set(WebSearchMode::Live)
++                .expect("search available");
++            config.tool_registry.execution_allowlist = Some(BTreeMap::new());
++        })
++        .build_with_auto_env(&server)
++        .await?;
++    test.submit_turn("Exercise the test call despite its omitted schema")
++        .await?;
++    let requests = responses.requests();
++    assert_eq!(requests.len(), 2);
++    assert_eq!(requests[0].body_json()["tools"], json!([]));
++    assert_eq!(
++        requests[1].function_call_output_text("call-1"),
++        Some("tool execution blocked by the configured execution allowlist".to_string())
++    );
++    Ok(())
++}

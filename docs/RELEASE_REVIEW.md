@@ -4,6 +4,7 @@ This is a local review repository. No remote, public repository, issue or PR is 
 
 ## Before any publication
 
+- [ ] Resolve the named gates in `docs/benchline/licenses/catalog.json`, reconcile actual release artifacts and run `npm run licenses:release-check`; an inventory pass alone is not permission to publish.
 - [ ] Choose repository owner, name and visibility; review the exact tracked tree and first commit.
 - [ ] Choose a license after checking code provenance and dependency obligations. Do not assume communicating over MCP settles licensing questions.
 - [ ] Explicitly review Konnect's contributor agreement before any code contribution; no agreement was accepted during this preparation.

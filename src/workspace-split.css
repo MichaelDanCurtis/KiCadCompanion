@@ -1,0 +1,78 @@
+.workspace-split {width:100%; min-width:0;}
+.split-toolbar, .split-toolbar > div {display:flex; align-items:center; flex-wrap:wrap; gap:8px;}
+.split-toolbar {justify-content:space-between; padding:12px 0; border-bottom:1px solid var(--line);}
+.split-toolbar button {border:1px solid var(--line); border-radius:6px; padding:9px 12px; font-size:12px;}
+.split-toolbar [aria-selected=true] {background:var(--panel); color:var(--accent); border-color:var(--accent);}
+.split-grid {display:grid; align-items:stretch; min-width:0;}
+.split-pane {min-width:0; overflow-wrap:anywhere;}
+.split-pane[hidden] {display:none;}
+.split-handle {cursor:col-resize; touch-action:none; position:relative; min-height:120px; margin:12px 0;}
+.split-handle::before {content:''; position:absolute; width:2px; top:0; bottom:0; left:5px; background:var(--line); border-radius:4px;}
+.split-handle:hover::before, .split-handle:focus-visible::before {background:var(--accent);}
+.split-primary {padding-right:16px;}
+.split-secondary {padding-left:16px;}
+.split-grid[data-single=true] > .split-pane {padding:0;}
+.split-pane .model-start, .split-pane .model-nodes {grid-template-columns:minmax(0,1fr);}
+.split-pane .product-agent {display:flex; flex-direction:column; padding:18px; gap:12px; margin-top:24px;}
+.split-pane .product-agent-conversation {border:0; border-top:1px solid var(--line); padding:12px 0 0;}
+.split-pane .product-agent fieldset {min-width:0;}
+.split-pane .product-agent fieldset label {overflow-wrap:anywhere;}
+.split-pane .product-agent input[type=checkbox] {flex-shrink:0;}
+.split-pane .button-row {flex-wrap:wrap;}
+.split-pane .product-tag {white-space:normal;}
+.split-pane input:not([type=checkbox]), .split-pane select, .split-pane textarea {max-width:100%; min-width:0;}
+.project-model {max-width:1800px; width:100%;}
+.brief-shell {max-width:1800px; width:100%; margin:0 auto; padding:0 24px;}
+.brief-shell[hidden] {display:none;}
+.workspace-split .product-primary {padding:28px 12px;}
+.workspace-split .product-guide {padding:28px 20px; border:0;}
+.product-toolbar, .product-toolbar > div {flex-wrap:wrap;}
+.product-toolbar > div {min-width:0;}
+.product-toolbar select {max-width:min(260px,100%);}
+.topbar {height:auto; min-height:67px; flex-wrap:wrap; gap:10px; padding-top:12px; padding-bottom:12px;}
+.topbar .header-right {flex-wrap:wrap;}
+.product-field input, .product-field select {min-width:0;}
+.product-task-heading {flex-wrap:wrap;}
+.discipline-navigation {display:flex; flex-wrap:wrap; gap:8px; margin:24px 0 12px;}
+.discipline-availability, .artifact-workbench p {font-size:12px; line-height:1.7; color:var(--muted);}
+.artifact-context {border:1px solid var(--line); border-radius:8px; padding:14px; margin:18px 0; font-size:12px; overflow-wrap:anywhere;}
+.artifact-context p {line-height:1.6;}
+.model-editors {border:1px solid var(--line); border-radius:8px; margin:18px 0; padding:14px;}
+.model-editors > summary {font-weight:600; color:var(--text);}
+.workspace-view-controls {border:1px solid var(--line); border-radius:8px; padding:14px; margin:18px 0; font-size:12px;}
+.workspace-view-controls button {margin:4px;}
+.action-write-controls {border:0; padding:0; margin:0; min-width:0;}
+.review-window {display:block; height:auto; min-height:100vh; overflow:visible; padding:24px; max-width:1000px; margin:auto; color:var(--text,#dfe6e5); overflow-wrap:anywhere;}
+.review-window header {border-bottom:1px solid var(--line); margin-bottom:24px;}
+.review-window p {line-height:1.7;}
+.review-window .model-nodes {grid-template-columns:minmax(0,1fr);}
+.review-window .artifact-workbench {margin:24px 0;}
+.review-window section[aria-label="Shared AI conversation"] article {white-space:pre-wrap; border:1px solid var(--line); padding:16px; margin:12px 0;}
+@media(max-width:900px) {
+  .project-model {padding:20px;}
+  .brief-shell {padding:0 16px;}
+  .split-grid > .split-pane {padding:0;}
+  .product-toolbar {padding:14px 16px;}
+  .model-start, .model-nodes {grid-template-columns:minmax(0,1fr);}
+  .brand-sub {display:none;}
+}
+@media(max-width:540px) {
+  .product-areas > div, .product-dashboard-stats, .product-tool-grid {grid-template-columns:minmax(0,1fr);}
+  .product-brief-summary dl {grid-template-columns:minmax(0,1fr);}
+  .project-model {padding:14px;}
+  .split-toolbar button {padding:9px;}
+}
+
+.workflow-plan { margin-top: 16px; padding: 12px; border: 1px solid var(--border, #39404c); border-radius: 8px; }
+.workflow-panel ol { padding-left: 22px; }
+.workflow-task { margin: 16px 0; overflow-wrap: anywhere; }
+.workflow-task h4 { margin-bottom: 8px; }
+.workflow-task code { overflow-wrap: anywhere; }
+
+.module-package { margin: 16px 0; padding: 12px; border: 1px solid var(--border, #39404c); border-radius: 8px; overflow-wrap: anywhere; }
+.module-facts { padding: 0; list-style: none; }
+.module-facts > li { display: grid; grid-template-columns: minmax(100px, 1fr) minmax(70px, 1fr); gap: 8px; padding: 12px 0; border-bottom: 1px solid var(--border, #39404c); align-items: start; }
+.module-fact-review { grid-column: 1 / -1; }
+.module-fact-review code { overflow-wrap: anywhere; }
+.module-imported-notes { white-space: pre-wrap; }
+.module-library input[type=file] { max-width: 100%; }

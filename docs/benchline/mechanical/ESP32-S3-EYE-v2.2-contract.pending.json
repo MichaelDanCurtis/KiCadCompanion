@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "status": "awaiting-owner",
+  "target": "ESP32-S3-EYE v2.2",
+  "units": "mm",
+  "boardOutline": {
+    "width": 30,
+    "length": 60,
+    "sourceScope": "main-board outline only"
+  },
+  "assemblyEnvelope": null,
+  "origin": null,
+  "orientation": null,
+  "mountHoles": null,
+  "connectorOpenings": null,
+  "antennaAndThermalClearances": null,
+  "material": null,
+  "printTolerances": null,
+  "freecadVersion": null,
+  "blockers": [
+    "assembly envelope and protrusions unresolved",
+    "mount-hole and connector coordinates not approved",
+    "sub-board source revision conflict unresolved"
+  ],
+  "sourceObservations": {
+    "mainBoard": {
+      "widthMM": 30,
+      "lengthMM": 60,
+      "source": "https://dl.espressif.com/dl/schematics/DXF_ESP32-S3-EYE_MB_top_V2.2_20211207.pdf",
+      "locator": "page 1"
+    },
+    "subBoard": {
+      "widthMM": 30,
+      "lengthMM": 31.9,
+      "source": "https://dl.espressif.com/dl/schematics/DXF_ESP32-S3-EYE_SUB_V1.1_20211111.pdf",
+      "locator": "page 1"
+    }
+  },
+  "sourceReceipt": ".runtime/bl10-official-dimension-source.json",
+  "ownerDecisions": {
+    "supportedFreecadVersion": "1.1.3",
+    "blenderInstalled": "5.2.1",
+    "blenderRole": "optional asset preparation; no pilot asset source or reuse rights approved"
+  }
+}

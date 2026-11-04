@@ -1,0 +1,12 @@
+--- a/pcbnew/api/api_handler_pcb.cpp
++++ b/pcbnew/api/api_handler_pcb.cpp
+@@ -366,6 +366,9 @@
+         inputs["editor"] = clock;
+         kiapi::board::experimental::BoardDiagnostic result;
+         result.set_revision( HashBoardRevisionInputs( inputs ) );
++        // Observation only: dirty state is not an input to conditional model
++        // revisions, and reading it never marks or saves the document.
++        inputs["editor_dirty"] = frame()->IsContentModified();
+         result.set_inputs_json( EncodeBoardRevisionDiagnostic( inputs ) );
+         if( frame()->GetBoard() != board || clock != frame()->RevisionClock().Capture() )
+             throw std::runtime_error( "Native document lifetime changed during diagnostic capture" );

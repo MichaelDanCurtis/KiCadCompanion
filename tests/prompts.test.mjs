@@ -51,3 +51,9 @@ test('server routes studio and conversation input through the scoped prompt buil
   assert.match(source, /text: chatPrompt\(\{ text, mode, studio: Boolean\(imagePath\), context:/);
   assert.doesNotMatch(source, /Do not edit or save any KiCad file or change component selection/);
 });
+
+test('studio preserves omitted and incomplete model geometry',()=>{
+  const prompt=studioPrompt(options);
+  assert.match(prompt,/Parts marked dnp are intentionally omitted even if model files exist/);
+  assert.match(prompt,/hidden, transparent, missing and partially modeled geometry exactly as shown/);
+});

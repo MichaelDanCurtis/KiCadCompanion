@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "id": "2a4e6857-7ff6-46a1-9a07-97210fd07a03",
+  "revision": 1,
+  "name": "ESP32-S3-EYE v2.2 pilot — sourcing pending",
+  "items": [
+    {
+      "id": "174dfbb3-ea75-4853-b269-12ab795fcd31",
+      "references": [
+        "DEV1"
+      ],
+      "manufacturer": "Espressif Systems",
+      "mpn": "ESP32-S3-EYE",
+      "quantity": 1,
+      "dnp": false,
+      "packaging": "Bulk",
+      "moduleRef": null,
+      "offers": [],
+      "proposedSubstitutes": []
+    }
+  ]
+}

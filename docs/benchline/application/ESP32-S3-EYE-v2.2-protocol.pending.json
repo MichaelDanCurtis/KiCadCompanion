@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "status": "awaiting-owner",
+  "target": "ESP32-S3-EYE v2.2",
+  "applicationNeeded": null,
+  "referenceInteraction": null,
+  "transport": null,
+  "commands": null,
+  "responses": null,
+  "errorSemantics": null,
+  "timeoutMs": null,
+  "version": null,
+  "blockers": [
+    "no approved application brief",
+    "no firmware behavior contract",
+    "no simulator boundary or transport selected"
+  ]
+}

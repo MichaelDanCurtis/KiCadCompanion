@@ -1,5 +1,7 @@
 # Third-party and provenance review
 
+The version-specific [BL-02 inventory](docs/benchline/licenses/README.md) now records the full npm lockfile, retained notices, observed Python environment, external tools, asset boundaries and named release gates. Run `npm run licenses:check` after dependency/asset changes. A passing inventory check is not legal clearance; `npm run licenses:release-check` intentionally refuses while release decisions remain open.
+
 This extraction contains companion application source, not a copy of Konnect's Rust source, executable, KiCad libraries or Codex binaries. It connects to separately installed products. This boundary is an architectural description, not a legal opinion on licensing.
 
 Runtime/development dependencies and exact resolutions are in `package.json` and `package-lock.json`. Their notices and licenses must be reviewed and preserved when distributing dependencies. The UI uses React, React DOM, React Markdown, Lucide, A2UI, Express, Zod, the MCP SDK and Vite. The optional native shell uses system Cocoa/WebKit. The observer uses separately installed kicad-python; the read-only model auditor uses the KiCad-provided `pcbnew` bindings.

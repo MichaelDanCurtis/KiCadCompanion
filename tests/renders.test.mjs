@@ -44,3 +44,20 @@ test('render jobs preserve board provenance, reject overlap, persist history and
   await writeFile(board,'new saved fixture');release();while(store.pending)await new Promise(r=>setTimeout(r,5));
   assert.equal(changed.status,'failed');assert.match(changed.error,/changed during rendering/);
 });
+
+test('rendered model provenance is verified and changed model files invalidate the result',async()=>{
+  const root=await mkdtemp(join(tmpdir(),'companion-model-provenance-'));
+  const board=join(root,'fixture.txt');await writeFile(board,'unchanged board fixture');
+  for(const changed of [false,true]){
+    const store=new RenderStore({root:join(root,String(changed)),appRoot:root});await store.init();let audits=0;
+    store.run=async(_binary,args)=>{
+      if(args.includes('pcb')){await writeFile(args[args.indexOf('-o')+1],Buffer.from(png,'base64'));return 'rendered';}
+      audits++;
+      return JSON.stringify({schemaVersion:2,components:[{id:'U1',dnp:false,models:[{filename:'part.step',sha256:changed&&audits===2?'b'.repeat(64):'a'.repeat(64)}]}]});
+    };
+    const job=await store.start(board,{});while(store.pending)await new Promise(r=>setTimeout(r,5));
+    assert.equal(audits,2);
+    if(changed){assert.equal(job.status,'failed');assert.match(job.error,/Model assignments or files changed/);assert.notEqual(job.modelInputsVerified,true);}
+    else{assert.equal(job.status,'completed');assert.equal(job.modelInputsVerified,true);}
+  }
+});

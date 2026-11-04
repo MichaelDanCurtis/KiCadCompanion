@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "status": "awaiting-owner",
+  "target": {"vendor": "Espressif Systems", "model": "ESP32-S3-EYE", "hardwareRevision": "v2.2"},
+  "baseline": null,
+  "change": null,
+  "thresholds": null,
+  "artifacts": null,
+  "toolVersions": null,
+  "recovery": null,
+  "acceptanceChecks": null,
+  "unresolvedWarnings": null,
+  "physicalValidationPending": true,
+  "blockers": [
+    "no frozen connector/module revision change",
+    "no numeric cross-discipline thresholds",
+    "BL-09, BL-10 and BL-11 artifacts are not current",
+    "no restart checkpoint or manual-edit recovery point"
+  ]
+}

@@ -1,11 +1,14 @@
 import { execFileSync } from 'node:child_process';
-import { mkdirSync, copyFileSync } from 'node:fs';
+import { mkdirSync, copyFileSync, writeFileSync } from 'node:fs';
 import { dirname, resolve, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { portableLauncherSettings } from './launcher-settings.mjs';
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
-const contents = join(root, '.runtime/KiCad Companion.app/Contents');
+const contents = join(root, '.runtime/Benchline.app/Contents');
 mkdirSync(join(contents, 'MacOS'), { recursive: true });
+mkdirSync(join(contents, 'Resources'), { recursive: true });
 copyFileSync(join(root, 'native/Info.plist'), join(contents, 'Info.plist'));
-execFileSync('swiftc', [join(root, 'native/Companion.swift'), '-target', `${process.arch === 'arm64' ? 'arm64' : 'x86_64'}-apple-macosx14.0`, '-o', join(contents, 'MacOS/KiCadCompanion'), '-framework', 'Cocoa', '-framework', 'WebKit'], { stdio: 'inherit' });
+writeFileSync(join(contents,'Resources/launch.json'),JSON.stringify(portableLauncherSettings(),null,2)+'\n',{mode:0o600});
+execFileSync('swiftc', [join(root, 'native/Companion.swift'), '-target', `${process.arch === 'arm64' ? 'arm64' : 'x86_64'}-apple-macosx14.0`, '-o', join(contents, 'MacOS/Benchline'), '-framework', 'Cocoa', '-framework', 'WebKit'], { stdio: 'inherit' });
 execFileSync('codesign', ['--force', '--sign', '-', join(contents, '..')], { stdio: 'inherit' });
 console.log(`Built ${contents}`);
